@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 public class CartDO {
     private String id;
     private String foodId;
+    private String userId;
+    private String shopId; //商家id 参照美团饿了么外卖系统设计
+    private String orderId; //订单号
     private Integer quantity;
     @CreatedDate
     private LocalDateTime createTime;
