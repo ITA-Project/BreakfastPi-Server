@@ -1,4 +1,4 @@
-package com.ita.domain.dataproject;
+package com.ita.domain.dataobject;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,7 +16,7 @@ public class FoodDO {
     private String categoryId;
     private String name;
     private String imageUrl;
-    private String detail;
+    private String description;
     private Double price;
     private Integer stock;
     private Integer sales;

@@ -1,4 +1,4 @@
-package com.ita.domain.dataproject;
+package com.ita.domain.dataobject;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 
 /**
  * @author Dillon Xie
- * @date 11/21/2020
+ * @date 11/23/2020
  */
 @Data
-public class CategoryDO {
+public class OrderFoodDO {
     private Integer id;
-    private String name;
-    private Integer status; // 1-正常 2 已经废弃
-    private Integer sortOrder; //排序编号，同类展示顺序,数值相等则自然排序
+    private String foodId;
+    private String orderId;
+    private Integer quantity;
     @CreatedDate
     private LocalDateTime createTime;
     @LastModifiedDate

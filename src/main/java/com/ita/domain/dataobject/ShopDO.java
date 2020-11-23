@@ -1,4 +1,4 @@
-package com.ita.domain.dataproject;
+package com.ita.domain.dataobject;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,13 +11,12 @@ import java.time.LocalDateTime;
  * @date 11/21/2020
  */
 @Data
-public class CartDO {
-    private String id;
-    private String foodId;
-    private String userId;
-    private String shopId; //商家id 参照美团饿了么外卖系统设计
-    private String orderId; //订单号
-    private Integer quantity;
+public class ShopDO {
+    private Integer id;
+    private String shopName;
+    private String phone;
+    private String address;
+    private String description;
     @CreatedDate
     private LocalDateTime createTime;
     @LastModifiedDate
