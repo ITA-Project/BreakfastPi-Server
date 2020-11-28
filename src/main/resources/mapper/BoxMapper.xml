@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ita.domain.mapper.BoxMapper">
+    <select id="selectById" resultType="com.ita.domain.dataobject.BoxDO" parameterType="Integer">
+        select * from box where id = #{id};
+    </select>
+
+    <select id="selectAll" resultType="com.ita.domain.dataobject.BoxDO">
+        select * from box;
+    </select>
+
+    <insert id="insert" parameterType="com.ita.domain.dataobject.BoxDO">
+        insert into box(address, number, status, create_time)
+        values(#{box.address}, #{box.number}, #{box.status}, now());
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        delete from box where id = #{id};
+    </delete>
+
+    <update id="update" parameterType="com.ita.domain.dataobject.BoxDO">
+        update box set address = #{box.address}, number = #{box.number}, status = #{box.status}, update_time = now()
+        where id = #{box.id};
+    </update>
+</mapper>
