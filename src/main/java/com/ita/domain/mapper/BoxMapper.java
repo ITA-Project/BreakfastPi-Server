@@ -1,21 +1,17 @@
 package com.ita.domain.mapper;
 
-import com.ita.domain.dataobject.BoxDO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import com.ita.domain.entity.Box;
 
 import java.util.List;
 
-@Mapper
 public interface BoxMapper {
+    int deleteByPrimaryKey(Integer id);
 
-    int insert(@Param("box") BoxDO box);
+    int insert(Box record);
 
-    int delete(Integer id);
+    Box selectByPrimaryKey(Integer id);
 
-    int update(@Param("box") BoxDO box);
+    List<Box> selectAll();
 
-    BoxDO selectById(Integer id);
-
-    List<BoxDO> selectAll();
+    int updateByPrimaryKey(Box record);
 }

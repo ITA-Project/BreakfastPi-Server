@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ita.domain.mapper.CartMapper">
+    <resultMap id="BaseResultMap" type="com.ita.domain.entity.Cart">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="shop_id" jdbcType="INTEGER" property="shopId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from cart
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.ita.domain.entity.Cart">
+        insert into cart (id, quantity, product_id,
+                          user_id, shop_id, create_time,
+                          update_time)
+        values (#{id,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER},
+                #{userId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Cart">
+        update cart
+        set quantity    = #{quantity,jdbcType=INTEGER},
+            product_id  = #{productId,jdbcType=INTEGER},
+            user_id     = #{userId,jdbcType=INTEGER},
+            shop_id     = #{shopId,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, quantity, product_id, user_id, shop_id, create_time, update_time
+        from cart
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, quantity, product_id, user_id, shop_id, create_time, update_time
+        from cart
+    </select>
+    <resultMap id="BaseResultMap" type="com.ita.domain.entity.Cart">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="shop_id" jdbcType="INTEGER" property="shopId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from cart
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.ita.domain.entity.Cart">
+        insert into cart (id, quantity, product_id,
+                          user_id, shop_id, create_time,
+                          update_time)
+        values (#{id,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER},
+                #{userId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Cart">
+        update cart
+        set quantity    = #{quantity,jdbcType=INTEGER},
+            product_id  = #{productId,jdbcType=INTEGER},
+            user_id     = #{userId,jdbcType=INTEGER},
+            shop_id     = #{shopId,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, quantity, product_id, user_id, shop_id, create_time, update_time
+        from cart
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, quantity, product_id, user_id, shop_id, create_time, update_time
+        from cart
+    </select>
+</mapper>

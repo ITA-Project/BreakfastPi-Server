@@ -1,6 +1,6 @@
 package com.ita.domain.service;
 
-import com.ita.domain.dataobject.BoxDO;
+import com.ita.domain.entity.Box;
 import com.ita.domain.mapper.BoxMapper;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +15,23 @@ public class BoxService {
         this.boxMapper = boxMapper;
     }
 
-    public BoxDO selectById(Integer id) {
-        return boxMapper.selectById(id);
+    public Box selectById(Integer id) {
+        return boxMapper.selectByPrimaryKey(id);
     }
 
-    public List<BoxDO> selectAll() {
+    public List<Box> selectAll() {
         return boxMapper.selectAll();
     }
 
-    public int create(BoxDO box) {
+    public int create(Box box) {
         return boxMapper.insert(box);
     }
 
     public int delete(Integer id) {
-        return boxMapper.delete(id);
+        return boxMapper.deleteByPrimaryKey(id);
     }
 
-    public int update(BoxDO box) {
-        return boxMapper.update(box);
+    public int update(Box box) {
+        return boxMapper.updateByPrimaryKey(box);
     }
 }
