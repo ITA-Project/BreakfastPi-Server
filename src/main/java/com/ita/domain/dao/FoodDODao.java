@@ -2,6 +2,7 @@ package com.ita.domain.dao;
 
 import com.ita.domain.dataobject.FoodDO;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -10,6 +11,7 @@ import org.apache.ibatis.annotations.Param;
  * @author makejava
  * @since 2020-11-30 16:42:12
  */
+@Mapper
 public interface FoodDODao {
 
   /**
