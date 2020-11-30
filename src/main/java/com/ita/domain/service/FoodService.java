@@ -9,7 +9,7 @@ import java.util.List;
  * @author makejava
  * @since 2020-11-30 16:42:13
  */
-public interface FoodDOService {
+public interface FoodService {
 
   /**
    * 通过ID查询单条数据

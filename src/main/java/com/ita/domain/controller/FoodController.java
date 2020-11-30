@@ -1,6 +1,7 @@
 package com.ita.domain.controller;
 
 import com.ita.domain.dataobject.FoodDO;
+import com.ita.domain.service.FoodService;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class FoodController {
    * 服务对象
    */
   @Resource
-  private com.ita.domain.service.FoodDOService FoodDOService;
+  private FoodService FoodService;
 
   /**
    * 通过主键查询单条数据
@@ -31,7 +32,7 @@ public class FoodController {
    */
   @GetMapping("selectOne")
   public FoodDO selectOne(Integer id) {
-    return this.FoodDOService.queryById(id);
+    return this.FoodService.queryById(id);
   }
 
   /**
@@ -42,7 +43,7 @@ public class FoodController {
    */
   @GetMapping("selectByQuery")
   public List<FoodDO> selectByQuery(FoodDO FoodDO) {
-    return this.FoodDOService.queryAll(FoodDO);
+    return this.FoodService.queryAll(FoodDO);
   }
 
 }

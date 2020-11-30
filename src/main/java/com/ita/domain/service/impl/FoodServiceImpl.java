@@ -1,8 +1,8 @@
 package com.ita.domain.service.impl;
 
-import com.ita.domain.dao.FoodDODao;
+import com.ita.domain.dao.FoodDao;
 import com.ita.domain.dataobject.FoodDO;
-import com.ita.domain.service.FoodDOService;
+import com.ita.domain.service.FoodService;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
  * @since 2020-11-30 16:42:15
  */
 @Service("FoodDOService")
-public class FoodDOServiceImpl implements FoodDOService {
+public class FoodServiceImpl implements FoodService {
 
   @Resource
-  private FoodDODao FoodDODao;
+  private FoodDao FoodDao;
 
   /**
    * 通过ID查询单条数据
@@ -28,7 +28,7 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public FoodDO queryById(Integer id) {
-    return this.FoodDODao.queryById(id);
+    return this.FoodDao.queryById(id);
   }
 
   /**
@@ -40,7 +40,7 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public List<FoodDO> queryAllByLimit(int offset, int limit) {
-    return this.FoodDODao.queryAllByLimit(offset, limit);
+    return this.FoodDao.queryAllByLimit(offset, limit);
   }
 
   /**
@@ -51,7 +51,7 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public List<FoodDO> queryAll(FoodDO FoodDO) {
-    return this.FoodDODao.queryAll(FoodDO);
+    return this.FoodDao.queryAll(FoodDO);
   }
 
   /**
@@ -62,7 +62,7 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public FoodDO insert(FoodDO FoodDO) {
-    this.FoodDODao.insert(FoodDO);
+    this.FoodDao.insert(FoodDO);
     return FoodDO;
   }
 
@@ -74,7 +74,7 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public FoodDO update(FoodDO FoodDO) {
-    this.FoodDODao.update(FoodDO);
+    this.FoodDao.update(FoodDO);
     return this.queryById(FoodDO.getId());
   }
 
@@ -86,6 +86,6 @@ public class FoodDOServiceImpl implements FoodDOService {
    */
   @Override
   public boolean deleteById(Integer id) {
-    return this.FoodDODao.deleteById(id) > 0;
+    return this.FoodDao.deleteById(id) > 0;
   }
 }

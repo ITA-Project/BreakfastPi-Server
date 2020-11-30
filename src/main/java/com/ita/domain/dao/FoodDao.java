@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
  * @since 2020-11-30 16:42:12
  */
 @Mapper
-public interface FoodDODao {
+public interface FoodDao {
 
   /**
    * 通过ID查询单条数据

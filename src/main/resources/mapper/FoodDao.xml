@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace=".dao.FooddoDao">
+<mapper namespace=".dao.FoodDao">
 
-  <resultMap type=".entity.Fooddo" id="FooddoMap">
+  <resultMap type=".dataobject.FoodDO" id="FooddoMap">
     <result property="id" column="id" jdbcType="INTEGER"/>
     <result property="categoryId" column="category_id" jdbcType="VARCHAR"/>
     <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
