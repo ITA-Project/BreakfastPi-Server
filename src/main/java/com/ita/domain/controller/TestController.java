@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TestController {
+    private static final String SUCCESS = "SUCCESS";
+
     @GetMapping("test")
-    public String test(String input) {
-        return input;
+    public String test() {
+        return SUCCESS;
     }
 }
