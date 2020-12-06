@@ -10,35 +10,35 @@ import java.util.List;
 @RequestMapping("/boxes")
 public class BoxController {
 
-    private final BoxService boxService;
+    private final BoxService boxServiceImpl;
 
-    public BoxController(BoxService boxService) {
-        this.boxService = boxService;
+    public BoxController(BoxService boxServiceImpl) {
+        this.boxServiceImpl = boxServiceImpl;
     }
 
     @GetMapping("/{id}")
     public Box selectBoxById(@PathVariable Integer id) {
-        return boxService.selectById(id);
+        return boxServiceImpl.selectById(id);
     }
 
     @GetMapping
     public List<Box> selectAll() {
-        return boxService.selectAll();
+        return boxServiceImpl.selectAll();
     }
 
     @PostMapping
     public int create(@RequestBody Box box) {
-        return boxService.create(box);
+        return boxServiceImpl.create(box);
     }
 
     @DeleteMapping("/{id}")
     public int delete(@PathVariable Integer id) {
-        return boxService.delete(id);
+        return boxServiceImpl.delete(id);
     }
 
     @PutMapping
     public int update(@RequestBody Box box) {
-        return boxService.update(box);
+        return boxServiceImpl.update(box);
     }
 
 }
