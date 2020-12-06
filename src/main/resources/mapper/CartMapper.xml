@@ -42,4 +42,14 @@
         select id, quantity, product_id, user_id, shop_id, create_time, update_time
         from cart
     </select>
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete
+        from cart
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, quantity, product_id, user_id, shop_id, create_time, update_time
+        from cart
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
 </mapper>
