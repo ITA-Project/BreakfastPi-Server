@@ -1,6 +1,6 @@
 package com.ita.domain.service;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * @author Dillon Xie
