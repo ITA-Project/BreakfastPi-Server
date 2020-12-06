@@ -5,11 +5,13 @@ import com.ita.domain.mapper.BoxMapper;
 import com.ita.domain.service.BoxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class BoxServiceImpl implements BoxService {
 
     private final BoxMapper boxMapper;

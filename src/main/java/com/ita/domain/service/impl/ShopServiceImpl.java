@@ -10,12 +10,14 @@ import com.ita.domain.mapper.ShopMapper;
 import com.ita.domain.service.ShopService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional
 public class ShopServiceImpl implements ShopService {
 
     private final ShopMapper shopMapper;
@@ -30,6 +32,7 @@ public class ShopServiceImpl implements ShopService {
         this.shopMapper = shopMapper;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ShopDTO assembleShopDTOByShopId(Integer shopId) {
         Shop shop = shopMapper.selectByPrimaryKey(shopId);
