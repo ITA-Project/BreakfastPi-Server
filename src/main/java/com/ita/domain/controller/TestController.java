@@ -1,5 +1,7 @@
 package com.ita.domain.controller;
 
+import com.ita.domain.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,8 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TestController {
+    @Autowired
+    MessageService messageService;
+
     @GetMapping("test")
     public String test(String input) {
         return input;
+    }
+
+    @GetMapping("/mqtt")
+    public String mqtt() {
+        messageService.send("test");
+        return "ok";
     }
 }

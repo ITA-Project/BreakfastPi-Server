@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ita.domain.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.ita.domain.entity.Order">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+        <result column="deliver_time" jdbcType="TIMESTAMP" property="deliverTime"/>
+        <result column="store_time" jdbcType="TIMESTAMP" property="storeTime"/>
+        <result column="completed_time" jdbcType="TIMESTAMP" property="completedTime"/>
+        <result column="cancel_time" jdbcType="TIMESTAMP" property="cancelTime"/>
+        <result column="amount" jdbcType="DOUBLE" property="amount"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="box_id" jdbcType="INTEGER" property="boxId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="estimated_time" jdbcType="TIMESTAMP" property="estimatedTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from order
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.ita.domain.entity.Order">
+        insert into order (id, order_number, payment_time,
+                           deliver_time, store_time, completed_time,
+                           cancel_time, amount, user_id,
+                           box_id, create_time, update_time,
+                           estimated_time, status)
+        values (#{id,jdbcType=INTEGER}, #{orderNumber,jdbcType=VARCHAR}, #{paymentTime,jdbcType=TIMESTAMP},
+                #{deliverTime,jdbcType=TIMESTAMP}, #{storeTime,jdbcType=TIMESTAMP}, #{completedTime,jdbcType=TIMESTAMP},
+                #{cancelTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DOUBLE}, #{userId,jdbcType=INTEGER},
+                #{boxId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+                #{estimatedTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Order">
+        update order
+        set order_number   = #{orderNumber,jdbcType=VARCHAR},
+            payment_time   = #{paymentTime,jdbcType=TIMESTAMP},
+            deliver_time   = #{deliverTime,jdbcType=TIMESTAMP},
+            store_time     = #{storeTime,jdbcType=TIMESTAMP},
+            completed_time = #{completedTime,jdbcType=TIMESTAMP},
+            cancel_time    = #{cancelTime,jdbcType=TIMESTAMP},
+            amount         = #{amount,jdbcType=DOUBLE},
+            user_id        = #{userId,jdbcType=INTEGER},
+            box_id         = #{boxId,jdbcType=INTEGER},
+            create_time    = #{createTime,jdbcType=TIMESTAMP},
+            update_time    = #{updateTime,jdbcType=TIMESTAMP},
+            estimated_time = #{estimatedTime,jdbcType=TIMESTAMP},
+            status         = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               order_number,
+               payment_time,
+               deliver_time,
+               store_time,
+               completed_time,
+               cancel_time,
+               amount,
+               user_id,
+               box_id,
+               create_time,
+               update_time,
+               estimated_time,
+               status
+        from order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               order_number,
+               payment_time,
+               deliver_time,
+               store_time,
+               completed_time,
+               cancel_time,
+               amount,
+               user_id,
+               box_id,
+               create_time,
+               update_time,
+               estimated_time,
+               status
+        from order
+    </select>
+</mapper>
