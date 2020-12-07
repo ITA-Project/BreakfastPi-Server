@@ -1,6 +1,7 @@
 package com.ita.domain.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Order {
     private Integer id;
@@ -21,7 +22,7 @@ public class Order {
 
     private Integer userId;
 
-    private Integer boxId;
+    private Box box;
 
     private LocalDateTime createTime;
 
@@ -30,6 +31,8 @@ public class Order {
     private LocalDateTime estimatedTime;
 
     private Integer status;
+
+    private List<OrderItem> orderItems;
 
     public Integer getId() {
         return id;
@@ -103,14 +106,6 @@ public class Order {
         this.userId = userId;
     }
 
-    public Integer getBoxId() {
-        return boxId;
-    }
-
-    public void setBoxId(Integer boxId) {
-        this.boxId = boxId;
-    }
-
     public LocalDateTime getCreateTime() {
         return createTime;
     }
@@ -141,5 +136,21 @@ public class Order {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Box getBox() {
+        return box;
+    }
+
+    public void setBox(Box box) {
+        this.box = box;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }

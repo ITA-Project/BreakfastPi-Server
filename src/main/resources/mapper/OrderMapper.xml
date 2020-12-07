@@ -17,6 +17,37 @@
         <result column="estimated_time" jdbcType="TIMESTAMP" property="estimatedTime"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
+    <resultMap id="OrderMap" type="com.ita.domain.entity.Order">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+        <result column="deliver_time" jdbcType="TIMESTAMP" property="deliverTime"/>
+        <result column="store_time" jdbcType="TIMESTAMP" property="storeTime"/>
+        <result column="completed_time" jdbcType="TIMESTAMP" property="completedTime"/>
+        <result column="cancel_time" jdbcType="TIMESTAMP" property="cancelTime"/>
+        <result column="amount" jdbcType="DOUBLE" property="amount"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="estimated_time" jdbcType="TIMESTAMP" property="estimatedTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <association property="box" javaType="com.ita.domain.entity.Box">
+            <id column="bid" property="id"/>
+            <result column="address" property="address"/>
+            <result column="number" property="number"/>
+        </association>
+        <collection property="orderItems" ofType="com.ita.domain.entity.OrderItem">
+            <id column="oi_id" property="id"/>
+            <result column="quantity" property="quantity"/>
+            <association property="product" javaType="com.ita.domain.entity.Product">
+                <id column="pid" property="id"/>
+                <result column="name" property="name"/>
+                <result column="description" property="description"/>
+                <result column="image_url" property="imageUrl"/>
+                <result column="price" property="price"/>
+            </association>
+        </collection>
+    </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from order
@@ -85,5 +116,21 @@
                estimated_time,
                status
         from order
+    </select>
+    <select id="getOrdersByUser"  resultMap="OrderMap">
+        select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time,
+               o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
+               o.update_time, o.estimated_time, o.status,
+               b.id as bid, b.address, b.number,
+               oi.id as oi_id, oi.quantity,
+               p.id as pid, p.name, p.description, p.image_url, p.price
+        from `order` o inner join box b on o.box_id = b.id
+        inner join order_item oi on o.id = oi.order_id
+        inner join product p on p.id = oi.product_id
+        where o.user_id = #{userId,jdbcType=INTEGER} and o.status in
+        <foreach collection="statusList" item="item" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+        order by o.create_time desc
     </select>
 </mapper>

@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 public class OrderItem {
     private Integer id;
 
-    private Integer productId;
-
     private Integer orderId;
 
     private Integer quantity;
@@ -14,6 +12,8 @@ public class OrderItem {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private Product product;
 
     public Integer getId() {
         return id;
@@ -23,12 +23,12 @@ public class OrderItem {
         this.id = id;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Integer getOrderId() {
