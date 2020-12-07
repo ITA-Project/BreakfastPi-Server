@@ -19,7 +19,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{userId}")
-    public PageInfo<Order> selectBoxById(@PathVariable Integer userId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
+    public PageInfo<Order> getUserOrders(@PathVariable Integer userId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
         return orderService.getUserOrders(userId, page, pageSize, status);
     }
 

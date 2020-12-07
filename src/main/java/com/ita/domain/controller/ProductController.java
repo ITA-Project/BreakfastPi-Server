@@ -1,5 +1,6 @@
 package com.ita.domain.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ita.domain.entity.Product;
 import com.ita.domain.service.ProductService;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +11,9 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
-    public void setProductService(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -39,5 +40,10 @@ public class ProductController {
     @PutMapping
     public int update(@RequestBody Product product) {
         return productService.update(product);
+    }
+
+    @GetMapping("/recommend")
+    public PageInfo<Product> getRecommendProducts(@RequestParam int page, @RequestParam int pageSize) {
+        return productService.getRecommendProducts(page, pageSize);
     }
 }

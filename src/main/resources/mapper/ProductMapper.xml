@@ -91,4 +91,20 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="getRecommendProducts" resultMap="BaseResultMap">
+        select id,
+               name,
+               description,
+               image_url,
+               price,
+               stock,
+               sales,
+               status,
+               category_id,
+               create_time,
+               update_time
+        from product
+        order by sales desc
+    </select>
 </mapper>

@@ -1,5 +1,8 @@
 package com.ita.domain.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ita.domain.entity.Order;
 import com.ita.domain.entity.Product;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.ProductService;
@@ -41,5 +44,12 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public int update(Product product) {
         return productMapper.updateByPrimaryKey(product);
+    }
+
+    @Override
+    public PageInfo<Product> getRecommendProducts(int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<Product> products = productMapper.getRecommendProducts();
+        return new PageInfo<>(products);
     }
 }

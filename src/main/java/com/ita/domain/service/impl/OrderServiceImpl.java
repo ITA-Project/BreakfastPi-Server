@@ -4,12 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.entity.Order;
 import com.ita.domain.mapper.OrderMapper;
+import com.ita.domain.service.OrderService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class OrderServiceImpl {
+public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper orderMapper;
 
@@ -17,26 +18,32 @@ public class OrderServiceImpl {
         this.orderMapper = orderMapper;
     }
 
-    int delete(Integer id){
+    @Override
+    public int delete(Integer id){
         return orderMapper.deleteByPrimaryKey(id);
     }
 
-    int create(Order order){
+    @Override
+    public int create(Order order){
         return orderMapper.insert(order);
     }
 
+    @Override
     public Order detail(Integer id){
         return orderMapper.selectByPrimaryKey(id);
     }
 
+    @Override
     public List<Order> getAll(){
         return orderMapper.selectAll();
     }
 
+    @Override
     public int update(Order order){
         return orderMapper.updateByPrimaryKey(order);
     }
 
+    @Override
     public PageInfo<Order> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList){
         PageHelper.startPage(page, pageSize);
         List<Order> orders = orderMapper.getOrdersByUser(userId, statusList);

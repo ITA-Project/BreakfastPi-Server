@@ -1,5 +1,6 @@
 package com.ita.domain.service;
 
+import com.github.pagehelper.PageInfo;
 import com.ita.domain.entity.Product;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ProductService {
     public int delete(Integer id);
 
     public int update(Product product);
+
+    PageInfo<Product> getRecommendProducts(int page, int pageSize);
 }
