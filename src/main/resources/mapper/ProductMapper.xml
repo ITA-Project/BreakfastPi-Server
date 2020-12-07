@@ -72,4 +72,23 @@
                update_time
         from product
     </select>
+
+    <select id="selectAllByCategoryIds" resultMap="BaseResultMap">
+        select id,
+        name,
+        description,
+        image_url,
+        price,
+        stock,
+        sales,
+        status,
+        category_id,
+        create_time,
+        update_time
+        from product
+        where category_id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

@@ -42,4 +42,10 @@
         select id, name, status, sequence, shop_id, create_time, update_time
         from category
     </select>
+
+    <select id="selectAllByShopId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, name, status, sequence, shop_id, create_time, update_time
+        from category
+        where shop_id = #{id,jdbcType=INTEGER}
+    </select>
 </mapper>
