@@ -1,5 +1,6 @@
 package com.ita;
 
+import com.ita.domain.config.MiniProgramerConfig;
 import com.ita.domain.config.MqttConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -14,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @MapperScan(basePackages = "com.ita.domain.mapper")
-@EnableConfigurationProperties(MqttConfig.class)
+@EnableConfigurationProperties({MqttConfig.class, MiniProgramerConfig.class})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
