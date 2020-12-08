@@ -34,3 +34,7 @@ logging:
         domain:
           mapper:
             debug
+
+miniprogramer:
+  appId: wx73f6665d572025c6
+  appSecret: 0b7323537c39fea9864bb6a3137b2088

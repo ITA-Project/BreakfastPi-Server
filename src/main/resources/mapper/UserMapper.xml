@@ -55,6 +55,20 @@
         from user
         where id = #{id,jdbcType=INTEGER}
     </select>
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,
+               username,
+               password,
+               openId,
+               phone,
+               address,
+               department,
+               role,
+               create_time,
+               update_time
+        from user
+        where openId = #{openId,jdbcType=VARCHAR}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
         select id,
                username,
