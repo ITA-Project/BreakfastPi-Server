@@ -13,7 +13,7 @@ public class OrderItem {
 
     private LocalDateTime updateTime;
 
-    private Product product;
+    private Integer productId;
 
     public Integer getId() {
         return id;
@@ -23,12 +23,12 @@ public class OrderItem {
         this.id = id;
     }
 
-    public Product getProduct() {
-        return product;
+    public Integer getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 
     public Integer getOrderId() {

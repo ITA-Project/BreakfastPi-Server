@@ -1,5 +1,6 @@
 package com.ita.domain.mapper;
 
+import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.entity.Order;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface OrderMapper {
 
     int updateByPrimaryKey(Order record);
 
-    List<Order> getOrdersByUser(Integer userId, List<Integer> statusList);
+    List<OrderDTO> getOrdersByUser(Integer userId, List<Integer> statusList);
 }

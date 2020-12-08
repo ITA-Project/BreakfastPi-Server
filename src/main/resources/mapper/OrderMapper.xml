@@ -17,7 +17,7 @@
         <result column="estimated_time" jdbcType="TIMESTAMP" property="estimatedTime"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
-    <resultMap id="OrderMap" type="com.ita.domain.entity.Order">
+    <resultMap id="OrderMap" type="com.ita.domain.dto.OrderDTO">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
         <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
@@ -31,15 +31,15 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="estimated_time" jdbcType="TIMESTAMP" property="estimatedTime"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
-        <association property="box" javaType="com.ita.domain.entity.Box">
+        <association property="box" javaType="com.ita.domain.dto.BoxDTO">
             <id column="bid" property="id"/>
             <result column="address" property="address"/>
             <result column="number" property="number"/>
         </association>
-        <collection property="orderItems" ofType="com.ita.domain.entity.OrderItem">
+        <collection property="orderItems" ofType="com.ita.domain.dto.OrderItemDTO">
             <id column="oi_id" property="id"/>
             <result column="quantity" property="quantity"/>
-            <association property="product" javaType="com.ita.domain.entity.Product">
+            <association property="product" javaType="com.ita.domain.dto.ProductDTO">
                 <id column="pid" property="id"/>
                 <result column="name" property="name"/>
                 <result column="description" property="description"/>

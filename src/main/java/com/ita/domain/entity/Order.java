@@ -22,7 +22,7 @@ public class Order {
 
     private Integer userId;
 
-    private Box box;
+    private Integer boxId;
 
     private LocalDateTime createTime;
 
@@ -31,8 +31,6 @@ public class Order {
     private LocalDateTime estimatedTime;
 
     private Integer status;
-
-    private List<OrderItem> orderItems;
 
     public Integer getId() {
         return id;
@@ -138,19 +136,11 @@ public class Order {
         this.status = status;
     }
 
-    public Box getBox() {
-        return box;
+    public Integer getBoxId() {
+        return boxId;
     }
 
-    public void setBox(Box box) {
-        this.box = box;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+    public void setBoxId(Integer boxId) {
+        this.boxId = boxId;
     }
 }

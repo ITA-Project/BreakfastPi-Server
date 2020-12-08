@@ -2,6 +2,7 @@ package com.ita.domain.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.entity.Order;
 import com.ita.domain.mapper.OrderMapper;
 import com.ita.domain.service.OrderService;
@@ -44,9 +45,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<Order> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList){
+    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList){
         PageHelper.startPage(page, pageSize);
-        List<Order> orders = orderMapper.getOrdersByUser(userId, statusList);
+        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList);
         return new PageInfo<>(orders);
     }
 }
