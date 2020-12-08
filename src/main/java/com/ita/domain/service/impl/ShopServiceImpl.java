@@ -42,4 +42,29 @@ public class ShopServiceImpl implements ShopService {
         List<Product> products = productMapper.selectAllByCategoryIds(categoryIds);
         return ShopAssembler.assemblerToDTO(shop, categories, products);
     }
+
+    @Override
+    public Shop selectById(Integer id) {
+        return shopMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Shop> selectAll() {
+        return shopMapper.selectAll();
+    }
+
+    @Override
+    public int create(Shop shop) {
+        return shopMapper.insert(shop);
+    }
+
+    @Override
+    public int delete(Integer id) {
+        return shopMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public int update(Shop shop) {
+        return shopMapper.updateByPrimaryKey(shop);
+    }
 }
