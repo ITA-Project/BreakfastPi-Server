@@ -1,5 +1,4 @@
 package com.ita.domain.dto;
-import com.ita.domain.entity.Product;
 import lombok.Builder;
 import lombok.Data;
 

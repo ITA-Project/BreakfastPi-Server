@@ -14,4 +14,6 @@ public interface OrderItemMapper {
     List<OrderItem> selectAll();
 
     int updateByPrimaryKey(OrderItem record);
+
+    List<OrderItem> getUserTopTreeOrderItem(Integer id);
 }

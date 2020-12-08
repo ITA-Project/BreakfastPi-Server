@@ -107,4 +107,22 @@
         from product
         order by sales desc
     </select>
+    <select id="selectAllByProductIds" resultMap="BaseResultMap">
+        select id,
+        name,
+        description,
+        image_url,
+        price,
+        stock,
+        sales,
+        status,
+        category_id,
+        create_time,
+        update_time
+        from product
+        where id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

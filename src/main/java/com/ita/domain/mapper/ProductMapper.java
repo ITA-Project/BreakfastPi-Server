@@ -18,4 +18,6 @@ public interface ProductMapper {
     List<Product> selectAllByCategoryIds(List<Integer> categoryIds);
 
     List<Product> getRecommendProducts();
+
+    List<Product> selectAllByProductIds(List<Integer> productIds);
 }
