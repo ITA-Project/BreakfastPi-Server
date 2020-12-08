@@ -3,6 +3,7 @@ package com.ita.domain.controller;
 import com.ita.domain.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,9 +23,9 @@ public class TestController {
         return SUCCESS;
     }
 
-    @GetMapping("/mqtt")
-    public String mqtt() {
-        messageService.send("test");
+    @GetMapping("/mqtt/{boxId}")
+    public String mqtt(@PathVariable String boxId) {
+        messageService.send(boxId);
         return "ok";
     }
 }

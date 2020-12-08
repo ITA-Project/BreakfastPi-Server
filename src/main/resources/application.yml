@@ -40,3 +40,11 @@ logging:
         domain:
           mapper:
             debug
+
+mqtt:
+  broker: tcp://broker.emqx.io:1883
+  liveTime: 60
+  topic: ita/breakfast
+  username: ita
+  password: breakfast
+  clientId: mqttx_4a02f566
