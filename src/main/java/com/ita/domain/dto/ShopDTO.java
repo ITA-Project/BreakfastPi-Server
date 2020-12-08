@@ -1,20 +1,28 @@
 package com.ita.domain.dto;
 
-import com.ita.domain.entity.Category;
-import com.ita.domain.entity.Product;
-import com.ita.domain.entity.Shop;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
 public class ShopDTO {
 
-    private Shop shop;
+    private Integer id;
 
-    private List<Category> categories;
+    private String name;
 
-    private List<Product> products;
+    private String description;
+
+    private String address;
+
+    private String phone;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
+
+    private List<CategoryDTO> categories;
 }

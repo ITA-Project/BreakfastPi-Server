@@ -1,5 +1,6 @@
 package com.ita.domain.service.impl;
 
+import com.ita.domain.assembler.ShopAssembler;
 import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.entity.Category;
 import com.ita.domain.entity.Product;
@@ -39,10 +40,6 @@ public class ShopServiceImpl implements ShopService {
         List<Category> categories = categoryMapper.selectAllByShopId(shopId);
         List<Integer> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
         List<Product> products = productMapper.selectAllByCategoryIds(categoryIds);
-        return ShopDTO.builder()
-                .shop(shop)
-                .categories(categories)
-                .products(products)
-                .build();
+        return ShopAssembler.assemblerToDTO(shop, categories, products);
     }
 }
