@@ -7,6 +7,9 @@ import com.ita.domain.entity.Product;
 public class ProductAssembler {
 
     public static ProductDTO convertToDTO(Product product) {
+        if (product == null) {
+            return ProductDTO.builder().build();
+        }
         return ProductDTO.builder()
                 .id(product.getId())
                 .name(product.getName())

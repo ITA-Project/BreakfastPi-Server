@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 public class ShopAssembler {
 
     public static ShopDTO convertToDTO(Shop shop) {
+        if (shop == null) {
+            return ShopDTO.builder().build();
+        }
         return ShopDTO.builder()
                 .id(shop.getId())
                 .name(shop.getName())

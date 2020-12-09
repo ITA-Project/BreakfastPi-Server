@@ -86,10 +86,17 @@
         create_time,
         update_time
         from product
-        where category_id in
-        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
+        <where>
+            <if test="list == null or list.size() == 0">
+                1 = 2
+            </if>
+            <if test="list != null and list.size() > 0">
+                id in
+                <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="getRecommendProducts" resultMap="BaseResultMap">

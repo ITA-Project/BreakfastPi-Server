@@ -6,6 +6,9 @@ import com.ita.domain.entity.Category;
 public class CategoryAssembler {
 
     public static CategoryDTO convertToDTO(Category category) {
+        if (category == null) {
+            return CategoryDTO.builder().build();
+        }
         return CategoryDTO.builder()
                 .id(category.getId())
                 .name(category.getName())
