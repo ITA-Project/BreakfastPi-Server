@@ -59,6 +59,7 @@ public class UserController {
       user.setOpenid(openId);
       user.setId(purchaserIdGenerateService.generateId());
       user.setRole(UserRole.PURCHASER.getRole());
+      user.setUsername(UUID.randomUUID().toString());
       int i = userService.create(user);
       return ResponseEntity.ok().body(user.getId());
     }
