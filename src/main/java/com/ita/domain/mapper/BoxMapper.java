@@ -14,4 +14,6 @@ public interface BoxMapper {
     List<Box> selectAll();
 
     int updateByPrimaryKey(Box record);
+
+    List<Box> selectByStatus(Integer status);
 }

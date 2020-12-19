@@ -17,4 +17,6 @@ public interface OrderMapper {
     int updateByPrimaryKey(Order record);
 
     List<OrderDTO> getOrdersByUser(Integer userId, List<Integer> statusList);
+
+    OrderDTO getOrderDetail(String orderNumber);
 }

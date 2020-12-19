@@ -38,4 +38,9 @@
     select id, address, number, status, create_time, update_time
     from box
   </select>
+  <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, address, number, status
+    from box
+    where status = #{status,jdbcType=INTEGER}
+  </select>
 </mapper>

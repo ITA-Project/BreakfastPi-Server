@@ -3,22 +3,17 @@ package com.ita.domain.service;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
-import com.ita.domain.entity.Order;
+import com.ita.domain.error.BusinessException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderService {
-    int delete(Integer id);
+    PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList);
 
-    int create(Order order);
+    List<ProductDTO> getUserFavouriteProducts(Integer userId);
 
-    public Order detail(Integer id);
+    OrderDTO getOrderDetail(String orderNumber) throws BusinessException;
 
-    public List<Order> getAll();
-
-    public int update(Order order);
-
-    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList);
-
-    public List<ProductDTO> getUserFavouriteProducts(Integer userId);
+    OrderDTO createOrder(Integer userId, String address, LocalDateTime expectedMealTime) throws BusinessException;
 }
