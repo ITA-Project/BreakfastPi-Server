@@ -118,6 +118,23 @@ public class OrderServiceImpl implements OrderService {
         return OrderDTO.of(order, BoxDTO.of(box), orderItemDTOList);
     }
 
+    @Override
+    public PageInfo<OrderDTO> getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByStatus(statusList);
+        return new PageInfo<>(orderDTOS);
+    }
+
+    @Override
+    public int updateStatusByOrders(List<Integer> orderIds){
+        return this.orderMapper.updateStatusByPrimaryKey(orderIds, OrderStatusEnum.DELIVERED.getCode(), OrderStatusEnum.SHIPPED.getCode());
+    }
+
+    @Override
+    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds){
+        return this.orderMapper.selectOrdersByIds(orderIds);
+    }
+
     // todo 后续可以优化逻辑
     private Box determineBox(List<Box> freeBoxList) {
         Box box = freeBoxList.get(FIRST);

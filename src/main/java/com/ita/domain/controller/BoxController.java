@@ -2,6 +2,7 @@ package com.ita.domain.controller;
 
 import com.ita.domain.entity.Box;
 import com.ita.domain.service.BoxService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class BoxController {
     @PutMapping
     public int update(@RequestBody Box box) {
         return boxServiceImpl.update(box);
+    }
+
+    @PutMapping("/status")
+    public ResponseEntity<Boolean> updateBoxesStatus(@RequestParam List<Integer> orderIds){
+        return ResponseEntity.ok(boxServiceImpl.openAssociateOrdersBoxes(orderIds));
     }
 
 }

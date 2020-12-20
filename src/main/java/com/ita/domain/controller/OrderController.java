@@ -45,4 +45,15 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderDetail(orderNumber));
     }
 
+    @GetMapping("/status")
+    public ResponseEntity<PageInfo<OrderDTO>> getOrdersByStatus(@RequestParam List<Integer> status, @RequestParam int page, @RequestParam int pageSize) {
+        return ResponseEntity.ok(orderService.getOrdersByStatus(status, page, pageSize));
+    }
+
+    @PutMapping("/status/delivered")
+    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestParam List<Integer> orderIds){
+        this.orderService.updateStatusByOrders(orderIds);
+        return ResponseEntity.ok(true);
+    }
+
 }

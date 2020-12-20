@@ -15,4 +15,6 @@ public interface BoxService {
     int delete(Integer id);
 
     int update(Box box);
+
+    boolean openAssociateOrdersBoxes(List<Integer> orderIds);
 }
