@@ -48,4 +48,10 @@
         from category
         where shop_id = #{id,jdbcType=INTEGER}
     </select>
+
+    <insert id="createByShopId">
+        insert into category (name, status, sequence, shop_id)
+        values (#{category.name,jdbcType=VARCHAR}, #{category.status,jdbcType=INTEGER},
+                #{category.sequence,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER})
+    </insert>
 </mapper>

@@ -16,4 +16,6 @@ public interface CategoryMapper {
     int updateByPrimaryKey(Category record);
 
     List<Category> selectAllByShopId(Integer id);
+
+    int createByShopId(Integer shopId, Category category);
 }
