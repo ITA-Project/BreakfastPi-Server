@@ -20,4 +20,6 @@ public interface ProductMapper {
     List<Product> getRecommendProducts();
 
     List<Product> selectAllByProductIds(List<Integer> productIds);
+
+    int deleteByCategoryId(Integer categoryId);
 }

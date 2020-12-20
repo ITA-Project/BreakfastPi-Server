@@ -139,4 +139,9 @@
             </if>
         </where>
     </select>
+    <delete id="deleteByCategoryId" parameterType="java.lang.Integer">
+        delete
+        from product
+        where category_id = #{categoryId,jdbcType=INTEGER}
+    </delete>
 </mapper>

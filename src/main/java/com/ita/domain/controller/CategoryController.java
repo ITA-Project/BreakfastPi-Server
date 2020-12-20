@@ -18,4 +18,9 @@ public class CategoryController {
     public int createByShopId(@PathVariable Integer shopId, @RequestBody Category category) {
         return categoryServiceImpl.create(shopId, category);
     }
+
+    @DeleteMapping("/{id}")
+    public int delete(@PathVariable Integer id) {
+        return categoryServiceImpl.delete(id);
+    }
 }
