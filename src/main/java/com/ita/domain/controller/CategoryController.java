@@ -23,4 +23,9 @@ public class CategoryController {
     public int delete(@PathVariable Integer id) {
         return categoryServiceImpl.delete(id);
     }
+
+    @PutMapping
+    public int update(@RequestBody Category category) {
+        return categoryServiceImpl.update(category);
+    }
 }

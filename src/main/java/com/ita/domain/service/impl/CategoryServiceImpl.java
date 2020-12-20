@@ -29,4 +29,9 @@ public class CategoryServiceImpl implements CategoryService {
         productMapper.deleteByCategoryId(id);
         return categoryMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public int update(Category category) {
+        return categoryMapper.updateByPrimaryKey(category);
+    }
 }
