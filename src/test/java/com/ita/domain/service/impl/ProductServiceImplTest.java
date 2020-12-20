@@ -112,7 +112,7 @@ public class ProductServiceImplTest {
                 .description("test product info")
                 .price(11.0)
                 .sales(1)
-                .status(1)
+                .status(true)
                 .categoryId(1)
                 .stock(1)
                 .build();

@@ -28,7 +28,7 @@ public class ProductDTO {
 
     private Integer sales;
 
-    private Integer status;
+    private Boolean status;
 
     private Integer categoryId;
 

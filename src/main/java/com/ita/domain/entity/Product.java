@@ -2,7 +2,6 @@ package com.ita.domain.entity;
 
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +24,7 @@ public class Product {
 
     private Integer sales;
 
-    private Integer status;
+    private Boolean status;
 
     private Integer categoryId;
 

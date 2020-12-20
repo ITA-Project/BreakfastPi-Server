@@ -14,7 +14,7 @@ public class CategoryDTO {
 
     private String name;
 
-    private Integer status;
+    private Boolean status;
 
     private Integer sequence;
 

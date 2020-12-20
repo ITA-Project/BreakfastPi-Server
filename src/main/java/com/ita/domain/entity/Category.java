@@ -10,7 +10,7 @@ public class Category {
 
     private String name;
 
-    private Integer status;
+    private Boolean status;
 
     private Integer sequence;
 
