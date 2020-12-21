@@ -5,6 +5,7 @@ import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestParam Integer userId,
                                                 @RequestParam String address,
-                                                @RequestParam LocalDateTime expectedMealTime) throws BusinessException {
+                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime expectedMealTime) throws BusinessException {
         return ResponseEntity.ok(orderService.createOrder(userId, address, expectedMealTime));
     }
 

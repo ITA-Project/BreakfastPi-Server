@@ -12,17 +12,19 @@ public class Order {
 
     private String orderNumber;
 
-    private LocalDateTime paymentTime;
+    private LocalDateTime paymentTime;//支付时间
 
-    private LocalDateTime deliverTime;
+    private LocalDateTime deliverTime; // 发货时间
 
-    private LocalDateTime storeTime;
+    private LocalDateTime storeTime; // 装箱时间
+
+    private LocalDateTime acceptedTime; // 商家接单时间
 
     private LocalDateTime completedTime;
 
     private LocalDateTime cancelTime;
 
-    private Double amount;
+    private Double amount; // 订单总价
 
     private Integer userId;
 
@@ -32,7 +34,7 @@ public class Order {
 
     private LocalDateTime updateTime;
 
-    private LocalDateTime estimatedTime;
+    private LocalDateTime estimatedTime;// 用户期待收货时间
 
     private Integer status;
 }

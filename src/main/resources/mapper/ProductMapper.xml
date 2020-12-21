@@ -6,10 +6,10 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
-        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
         <result column="stock" jdbcType="INTEGER" property="stock"/>
         <result column="sales" jdbcType="INTEGER" property="sales"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -25,19 +25,19 @@
                              sales, status, category_id,
                              create_time, update_time)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-                #{imageUrl,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{stock,jdbcType=INTEGER},
-                #{sales,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER},
-                #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+                #{imageUrl,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
+                #{sales,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{categoryId,jdbcType=INTEGER},
+                now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Product">
         update product
         set name        = #{name,jdbcType=VARCHAR},
             description = #{description,jdbcType=VARCHAR},
             image_url   = #{imageUrl,jdbcType=VARCHAR},
-            price       = #{price,jdbcType=DOUBLE},
+            price       = #{price,jdbcType=DECIMAL},
             stock       = #{stock,jdbcType=INTEGER},
             sales       = #{sales,jdbcType=INTEGER},
-            status      = #{status,jdbcType=INTEGER},
+            status      = #{status,jdbcType=TINYINT},
             category_id = #{categoryId,jdbcType=INTEGER},
             create_time = #{createTime,jdbcType=TIMESTAMP},
             update_time = #{updateTime,jdbcType=TIMESTAMP}

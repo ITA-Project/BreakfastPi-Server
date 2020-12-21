@@ -56,7 +56,7 @@ public class CartServiceImplTest {
         assertEquals(Integer.valueOf(1), cartDTOList.get(0).getQuantity());
         assertEquals(Integer.valueOf(1), cartDTOList.get(0).getProduct().getCategoryId());
         assertEquals(Integer.valueOf(1), cartDTOList.get(0).getProduct().getSales());
-        assertEquals(Integer.valueOf(1), cartDTOList.get(0).getProduct().getStatus());
+        assertEquals(true, cartDTOList.get(0).getProduct().getStatus());
         assertEquals(Integer.valueOf(1), cartDTOList.get(0).getProduct().getStock());
         assertEquals("test product info", cartDTOList.get(0).getProduct().getDescription());
         assertEquals("test product", cartDTOList.get(0).getProduct().getName());

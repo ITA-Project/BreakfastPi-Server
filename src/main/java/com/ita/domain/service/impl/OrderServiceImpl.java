@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorResponseEnum.CART_IS_EMPTY);
         }
 
-        List<Box> freeBoxList = boxMapper.selectByStatus(BoxStatusEnum.FREE.getCode());
+        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
         if (CollectionUtils.isEmpty(freeBoxList)) {
             throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
         }
@@ -102,14 +102,13 @@ public class OrderServiceImpl implements OrderService {
                 .amount(orderTotalPrice)
                 .userId(userId)
                 .boxId(box.getId())
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
+                .estimatedTime(expectedMealTime)
                 .paymentTime(LocalDateTime.now())
                 .status(OrderStatusEnum.PAID.getCode())
                 .build();
         orderMapper.insert(order);
 
-        saveOrderItem(cartList, order.getId()); // todo
+        saveOrderItem(cartList, order.getOrderNumber());
 
         updateStockAndSale(orderItemDTOList);
 
@@ -162,10 +161,10 @@ public class OrderServiceImpl implements OrderService {
         return totalPrice;
     }
 
-    private void saveOrderItem(List<Cart> cartList, Integer orderId) {
+    private void saveOrderItem(List<Cart> cartList, String orderNumber) {
         cartList.forEach(item -> {
             OrderItem orderItem = OrderItem.builder()
-                    .orderId(orderId)
+                    .orderNumber(orderNumber)
                     .productId(item.getProductId())
                     .quantity(item.getQuantity())
                     .createTime(LocalDateTime.now())

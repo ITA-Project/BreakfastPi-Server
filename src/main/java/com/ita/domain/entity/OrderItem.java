@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class OrderItem {
     private Integer id;
 
-    private Integer orderId;
+    private String orderNumber;
 
     private Integer quantity;
 

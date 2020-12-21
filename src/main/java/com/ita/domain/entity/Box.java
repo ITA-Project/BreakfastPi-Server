@@ -1,10 +1,12 @@
 package com.ita.domain.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class Box {
     private Integer id;
 
