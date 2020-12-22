@@ -11,8 +11,8 @@
         </commentGenerator>
 
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/breakfast-pi?characterEncoding=utf-8&amp;serverTimezone=GMT%2B8"
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/breakfast-pi?characterEncoding=utf-8&amp;serverTimezone=GMT%2B8&amp;useSSL=false"
                         userId="root"
                         password="admin">
         </jdbcConnection>
@@ -51,20 +51,6 @@
         domainObjectName：生成的domain类的名字,当表名和domain类的名字有差异时一定要设置，如果不设置，直接使用表名作为domain类的名字；
         可以设置为somepck.domainName，那么会自动把domainName类再放到somepck包里面；
         -->
-        <table tableName="box" domainObjectName="Box"/>
-
-        <table tableName="cart" domainObjectName="Cart"/>
-
-        <table tableName="category" domainObjectName="Category"/>
-
-        <table tableName="order" domainObjectName="Order"/>
-
-        <table tableName="order_item" domainObjectName="OrderItem"/>
-
-        <table tableName="product" domainObjectName="Product"/>
-
-        <table tableName="shop" domainObjectName="Shop"/>
-
-        <table tableName="user" domainObjectName="User"/>
+        <table tableName="pay_info" domainObjectName="PayInfo"/>
     </context>
 </generatorConfiguration>

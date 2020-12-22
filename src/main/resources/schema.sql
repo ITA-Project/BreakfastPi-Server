@@ -122,3 +122,14 @@ create table order_item
     constraint order_product_product_id_fk
         foreign key (product_id) references product (id)
 );
+
+create table pay_info
+(
+    id int auto_increment primary key,
+    order_number char(19) not null,
+    pay_number char(19) not null,
+    pay_status tinyint null,
+    user_id int null,
+    create_time timestamp null,
+    update_time timestamp null
+);
