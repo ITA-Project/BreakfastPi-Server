@@ -2,9 +2,9 @@ package com.ita.domain.mapper;
 
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.entity.Order;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface OrderMapper {
     int deleteByPrimaryKey(Integer id);
@@ -26,4 +26,6 @@ public interface OrderMapper {
     int updateStatusByPrimaryKey(List<Integer> orderIds, Integer status, Integer prevStatus);
 
     List<OrderDTO> selectOrdersByIds(@Param("orderIds") List<Integer> orderIds);
+
+    List<OrderDTO> getOrdersByShop(List<Integer> statusList, List<Integer> productIdList);
 }

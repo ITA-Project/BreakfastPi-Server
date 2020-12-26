@@ -9,19 +9,21 @@ import lombok.Getter;
 @Getter
 public enum ErrorResponseEnum implements ErrorResponse {
     //通用错误类型10001
-    PARAMETER_VALIDATION_ERROR(10001,"参数不合法"),
-    UNKNOWN_ERROR(10002,"未知错误"),
+    PARAMETER_VALIDATION_ERROR(10001, "参数不合法"),
+    UNKNOWN_ERROR(10002, "未知错误"),
 
     //20000开头为用户信息相关错误定义
-    USER_NOT_EXIST(20001,"用户不存在"),
-    USER_NOT_LOGIN_(20002,"用户还未登录"),
+    USER_NOT_EXIST(20001, "用户不存在"),
+    USER_NOT_LOGIN_(20002, "用户还未登录"),
     //30000开头为交易信息相关错误定义
-    STOCK_NOT_ENOUGH(30001,"库存不足"),
+    STOCK_NOT_ENOUGH(30001, "库存不足"),
     CART_IS_EMPTY(30002, "购物车为空"),
     BOX_NOT_ENOUGH(30003, "没有多余的柜子"),
+    ORDER_NOT_EXIST(30004, "订单不存在"),
+    ORDER_STATUS_INCORRECT(30005, "订单状态不正确"),
     ;
 
-    private int errCode;
+    private final int errCode;
     private String errMsg;
 
 
