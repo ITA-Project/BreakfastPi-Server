@@ -4,13 +4,13 @@ import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.entity.Box;
 import com.ita.domain.mapper.BoxMapper;
 import com.ita.domain.service.BoxService;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,22 +29,32 @@ public class BoxServiceImpl implements BoxService {
         this.boxMapper = boxMapper;
     }
 
+    @Override
     public Box selectById(Integer id) {
         return boxMapper.selectByPrimaryKey(id);
     }
 
+    @Override
     public List<Box> selectAll() {
         return boxMapper.selectAll();
     }
 
+    @Override
+    public List<Box> selectByStatus(Integer status) {
+        return boxMapper.selectByStatus(status);
+    }
+
+    @Override
     public int create(Box box) {
         return boxMapper.insert(box);
     }
 
+    @Override
     public int delete(Integer id) {
         return boxMapper.deleteByPrimaryKey(id);
     }
 
+    @Override
     public int update(Box box) {
         return boxMapper.updateByPrimaryKey(box);
     }

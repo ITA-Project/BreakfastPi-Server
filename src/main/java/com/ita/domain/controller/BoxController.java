@@ -27,6 +27,11 @@ public class BoxController {
         return boxServiceImpl.selectAll();
     }
 
+    @GetMapping("/status/{status}")
+    public List<Box> selectByStatus(@PathVariable Integer status) {
+        return boxServiceImpl.selectByStatus(status);
+    }
+
     @PostMapping
     public int create(@RequestBody Box box) {
         return boxServiceImpl.create(box);
