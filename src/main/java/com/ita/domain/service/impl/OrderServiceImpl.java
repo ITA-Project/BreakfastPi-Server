@@ -17,6 +17,7 @@ import com.ita.utils.IdWorker;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -69,6 +70,8 @@ public class OrderServiceImpl implements OrderService {
         return orderDetail;
     }
 
+
+    @Transactional
     @Override
     public OrderDTO createOrder(Integer userId, String address, LocalDateTime expectedMealTime) throws BusinessException {
         /*

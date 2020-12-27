@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ita.domain.mapper.PayInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ita.domain.entity.PayInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_number" jdbcType="CHAR" property="orderNumber" />
+    <result column="pay_number" jdbcType="CHAR" property="payNumber" />
+    <result column="pay_status" jdbcType="TINYINT" property="payStatus" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ita.domain.entity.PayInfo">
+    insert into pay_info (id, order_number, pay_number, 
+      pay_status, user_id, create_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{orderNumber,jdbcType=CHAR}, #{payNumber,jdbcType=CHAR}, 
+      #{payStatus,jdbcType=TINYINT}, #{userId,jdbcType=INTEGER}, now(),
+      now())
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, order_number, pay_number, pay_status, user_id, create_time, update_time
+    from pay_info
+  </select>
+</mapper>
