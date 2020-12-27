@@ -3,11 +3,11 @@ package com.ita.domain.service;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
+import com.ita.domain.entity.Order;
 import com.ita.domain.error.BusinessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface OrderService {
     PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList);
@@ -22,5 +22,9 @@ public interface OrderService {
 
     int updateStatusByOrders(List<Integer> orderIds);
 
+    int updateOrderStatus(Integer orderId, Order order) throws BusinessException;
+
     List<OrderDTO> getOrdersByIds(List<Integer> orderIds);
+
+    PageInfo<OrderDTO> getShopOrders(Integer shop, int page, int pageSize, List<Integer> statusList);
 }
