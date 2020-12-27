@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,9 +42,11 @@ public class OrderServiceImpl implements OrderService {
     private BoxMapper boxMapper;
     @Resource
     private IdWorker idWorker;
+    @Resource
+    private CategoryMapper categoryMapper;
 
     @Override
-    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList){
+    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
         PageHelper.startPage(page, pageSize);
         List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList);
         return new PageInfo<>(orders);
@@ -87,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorResponseEnum.CART_IS_EMPTY);
         }
 
-        List<Box> freeBoxList = boxMapper.selectByStatus(BoxStatusEnum.FREE.getCode());
+        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
         if (CollectionUtils.isEmpty(freeBoxList)) {
             throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
         }
@@ -102,14 +105,12 @@ public class OrderServiceImpl implements OrderService {
                 .amount(orderTotalPrice)
                 .userId(userId)
                 .boxId(box.getId())
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .paymentTime(LocalDateTime.now())
+                .estimatedTime(expectedMealTime)
                 .status(OrderStatusEnum.PAID.getCode())
                 .build();
         orderMapper.insert(order);
 
-        saveOrderItem(cartList, order.getId()); // todo
+        saveOrderItem(cartList, order.getOrderNumber());
 
         updateStockAndSale(orderItemDTOList);
 
@@ -162,10 +163,10 @@ public class OrderServiceImpl implements OrderService {
         return totalPrice;
     }
 
-    private void saveOrderItem(List<Cart> cartList, Integer orderId) {
+    private void saveOrderItem(List<Cart> cartList, String orderNumber) {
         cartList.forEach(item -> {
             OrderItem orderItem = OrderItem.builder()
-                    .orderId(orderId)
+                    .orderNumber(orderNumber)
                     .productId(item.getProductId())
                     .quantity(item.getQuantity())
                     .createTime(LocalDateTime.now())
@@ -188,5 +189,30 @@ public class OrderServiceImpl implements OrderService {
         cartList.forEach(item -> {
             cartMapper.deleteByPrimaryKey(item.getId());
         });
+    }
+
+    @Override
+    public PageInfo<OrderDTO> getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
+        List<Integer> categoryIdList = categoryMapper.selectAllByShopId(shopId)
+                .stream().map(Category::getId).collect(Collectors.toList());
+        List<Integer> productIdList = productMapper.selectAllByCategoryIds(categoryIdList)
+                .stream().map(Product::getId).collect(Collectors.toList());
+        PageHelper.startPage(page, pageSize);
+        List<OrderDTO> orders = orderMapper.getOrdersByShop(statusList, productIdList);
+        return new PageInfo<>(orders);
+    }
+
+    @Override
+    public int updateOrderStatus(Integer orderId, Order order) throws BusinessException {
+        Order originalOrder = orderMapper.selectByPrimaryKey(orderId);
+        if (Objects.isNull(originalOrder)) {
+            throw new BusinessException(ErrorResponseEnum.ORDER_NOT_EXIST);
+        }
+        List<Integer> orderStatusCodes = Arrays.stream(OrderStatusEnum.values()).map(OrderStatusEnum::getCode).collect(Collectors.toList());
+        if (!orderStatusCodes.contains(order.getStatus())) {
+            throw new BusinessException(ErrorResponseEnum.ORDER_STATUS_INCORRECT);
+        }
+        originalOrder.setStatus(order.getStatus());
+        return orderMapper.updateByPrimaryKey(originalOrder);
     }
 }

@@ -10,6 +10,8 @@ public interface BoxService {
 
     List<Box> selectAll();
 
+    List<Box> selectByStatus(Integer status);
+
     int create(Box box);
 
     int delete(Integer id);

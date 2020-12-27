@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.ita.domain.entity.OrderItem">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="product_id" jdbcType="INTEGER" property="productId"/>
-        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="order_number" jdbcType="CHAR" property="orderNumber"/>
         <result column="quantity" jdbcType="INTEGER" property="quantity"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -15,32 +15,32 @@
         where id = #{id,jdbcType=INTEGER}
     </delete>
     <insert id="insert" parameterType="com.ita.domain.entity.OrderItem">
-        insert into order_item (id, product_id, order_id,
+        insert into order_item (id, product_id, order_number,
                                 quantity, create_time, update_time)
-        values (#{id,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER},
+        values (#{id,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{orderNumber,jdbcType=CHAR},
                 #{quantity,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.OrderItem">
         update order_item
         set product_id  = #{productId,jdbcType=INTEGER},
-            order_id    = #{orderId,jdbcType=INTEGER},
+            order_number    = #{orderNumber,jdbcType=CHAR},
             quantity    = #{quantity,jdbcType=INTEGER},
             create_time = #{createTime,jdbcType=TIMESTAMP},
             update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select id, product_id, order_id, quantity, create_time, update_time
+        select id, product_id, order_number, quantity, create_time, update_time
         from order_item
         where id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
-        select id, product_id, order_id, quantity, create_time, update_time
+        select id, product_id, order_number, quantity, create_time, update_time
         from order_item
     </select>
     <select id="getUserTopTreeOrderItem" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select oi.id, oi.product_id, oi.order_id, oi.quantity, oi.create_time, oi.update_time
-        from order_item oi inner join `order` o on oi.order_id = o.id
+        select oi.id, oi.product_id, oi.order_number, oi.quantity, oi.create_time, oi.update_time
+        from order_item oi inner join `order` o on oi.order_number = o.order_number
         where o.user_id = #{userId,jdbcType=INTEGER}
         group by oi.product_id
         order by count(oi.product_id) desc

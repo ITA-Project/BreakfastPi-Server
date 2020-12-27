@@ -2,7 +2,6 @@ package com.ita.domain.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ita.domain.entity.Order;
 import com.ita.domain.entity.Product;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.ProductService;

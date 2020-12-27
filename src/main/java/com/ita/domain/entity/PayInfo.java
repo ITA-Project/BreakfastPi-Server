@@ -5,18 +5,14 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Data
-public class OrderItem {
+@Builder
+public class PayInfo {
     private Integer id;
-
     private String orderNumber;
-
-    private Integer quantity;
-
+    private String payNumber;
+    private Integer payStatus;
+    private Integer userId;
     private LocalDateTime createTime;
-
     private LocalDateTime updateTime;
-
-    private Integer productId;
 }

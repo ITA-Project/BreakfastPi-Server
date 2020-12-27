@@ -3,8 +3,10 @@ package com.ita.domain.controller;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
+import com.ita.domain.entity.Order;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,7 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestParam Integer userId,
                                                 @RequestParam String address,
-                                                @RequestParam LocalDateTime expectedMealTime) throws BusinessException {
+                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime expectedMealTime) throws BusinessException {
         return ResponseEntity.ok(orderService.createOrder(userId, address, expectedMealTime));
     }
 
@@ -51,9 +53,19 @@ public class OrderController {
     }
 
     @PutMapping("/status/delivered")
-    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestParam List<Integer> orderIds){
+    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestParam List<Integer> orderIds) {
         this.orderService.updateStatusByOrders(orderIds);
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/shops/{shopId}")
+    public ResponseEntity<PageInfo<OrderDTO>> getShopOrders(@PathVariable Integer shopId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
+        return ResponseEntity.ok(orderService.getShopOrders(shopId, page, pageSize, status));
+    }
+
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<Integer> updateOrderStatus(@PathVariable Integer orderId, @RequestBody Order order) throws BusinessException {
+        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, order));
     }
 
 }

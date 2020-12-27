@@ -37,7 +37,7 @@ public class CartServiceImpl implements CartService{
                 .productId(cartVO.getProductId())
                 .quantity(cartVO.getQuantity())
                 .userId(cartVO.getUserId())
-                .shopId(0)
+                .shopId(cartVO.getShopId())
                 .build()));
     }
 

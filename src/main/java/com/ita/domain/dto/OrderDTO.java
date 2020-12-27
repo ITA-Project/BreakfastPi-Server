@@ -25,6 +25,8 @@ public class OrderDTO {
 
     private LocalDateTime storeTime;
 
+    private LocalDateTime acceptedTime;
+
     private LocalDateTime completedTime;
 
     private LocalDateTime cancelTime;
