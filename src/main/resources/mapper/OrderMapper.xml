@@ -171,7 +171,7 @@
               oi.id as oi_id, oi.quantity,
               p.id as pid, p.name, p.description, p.image_url, p.price
         from `order` o inner join box b on o.box_id = b.id
-        inner join order_item oi on o.id = oi.order_id
+        inner join order_item oi on o.order_number = oi.order_number
         inner join product p on p.id = oi.product_id
         where o.status in
         <foreach collection="statusList" item="item" open="(" separator="," close=")">
@@ -195,7 +195,7 @@
       oi.id as oi_id, oi.quantity,
       p.id as pid, p.name, p.description, p.image_url, p.price
       from `order` o inner join box b on o.box_id = b.id
-      inner join order_item oi on o.id = oi.order_id
+      inner join order_item oi on o.order_number = oi.order_number
       inner join product p on p.id = oi.product_id
       where o.id in
       <foreach collection="orderIds" item="item" open="(" separator="," close=")">
