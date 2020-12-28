@@ -61,3 +61,6 @@ ftp:
   port: 21
   account: GH61l9PYk4baFr9nBODwwrqsstMouIOnQ3mALz8jPEU=
   path: /usr/local/openresty/nginx/html/resources
+
+image:
+  path: D:/usr/local/openresty/nginx/html/resources/
