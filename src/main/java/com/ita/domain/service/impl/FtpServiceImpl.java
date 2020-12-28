@@ -31,6 +31,7 @@ public class FtpServiceImpl implements FtpService {
             return true;
         } catch (IOException e) {
             log.error("Failed to upload {} to FTP server", originName);
+            log.error(e.getMessage(), e);
             return false;
         }
     }
