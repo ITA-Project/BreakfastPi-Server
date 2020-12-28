@@ -1,6 +1,11 @@
 package com.ita.domain.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +13,6 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class Product {
     private Integer id;
 
@@ -28,8 +32,10 @@ public class Product {
 
     private Integer categoryId;
 
+    @CreatedDate
     private LocalDateTime createTime;
 
+    @LastModifiedDate
     private LocalDateTime updateTime;
 
 }
