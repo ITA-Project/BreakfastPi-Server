@@ -18,6 +18,7 @@ public class MqttMessageServiceImpl implements MessageService {
 
     @Autowired
     private MqttConfig mqttConfig;
+
     @Value("${aes.secret}")
     private String secret;
 

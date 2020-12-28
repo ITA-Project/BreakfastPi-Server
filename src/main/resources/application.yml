@@ -59,6 +59,5 @@ aes:
 ftp:
   host: localhost
   port: 21
-  username: root
-  password: Dillon123456xkl
+  account: GH61l9PYk4baFr9nBODwwrqsstMouIOnQ3mALz8jPEU=
   path: /usr/local/openresty/nginx/html/resources
