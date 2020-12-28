@@ -20,7 +20,7 @@ public interface OrderService {
 
     PageInfo<OrderDTO> getOrdersByStatus(List<Integer> statusList, int page, int pageSize);
 
-    int updateStatusByOrders(List<Integer> orderIds);
+    boolean updateStatusByOrders(List<Integer> orderIds);
 
     int updateOrderStatus(Integer orderId, Order order) throws BusinessException;
 

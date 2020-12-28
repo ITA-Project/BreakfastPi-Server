@@ -46,13 +46,15 @@ mqtt:
   broker: tcp://broker.emqx.io:1883
   liveTime: 60
   topic: ita/breakfast
-  username: ita
-  password: breakfast
+  connStr: fR0pWHACB35Y46StaLsT0A==
   clientId: mqttx_4a02f566
 
 miniprogramer:
   appId: wxeb9fc8420790d4fd
   appSecret: f32d7217755c1df12d45b7bd34a78a38
+
+aes:
+  secret: ixHAvlnOMOGroRby
 
 ftp:
   host: localhost

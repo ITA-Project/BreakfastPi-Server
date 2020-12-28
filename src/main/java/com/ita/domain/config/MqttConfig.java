@@ -11,7 +11,6 @@ public class MqttConfig {
     private String broker;
     private String liveTime;
     private String topic;
-    private String username;
-    private String password;
+    private String connStr;
     private String clientId;
 }
