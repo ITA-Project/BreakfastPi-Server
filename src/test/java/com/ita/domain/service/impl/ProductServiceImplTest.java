@@ -36,7 +36,7 @@ public class ProductServiceImplTest {
         //then
         assertEquals(Integer.valueOf(1), product.getCategoryId());
         assertEquals(Integer.valueOf(1), product.getSales());
-        assertEquals(true, product.getStatus());
+        assertEquals(1, product.getStatus().intValue());
         assertEquals(Integer.valueOf(1), product.getStock());
         assertEquals("test product info", product.getDescription());
         assertEquals("test product", product.getName());
@@ -54,7 +54,7 @@ public class ProductServiceImplTest {
         assertEquals(1, productList.size());
         assertEquals(Integer.valueOf(1), productList.get(0).getCategoryId());
         assertEquals(Integer.valueOf(1), productList.get(0).getSales());
-        assertEquals(true, productList.get(0).getStatus());
+        assertEquals(1, productList.get(0).getStatus().intValue());
         assertEquals(Integer.valueOf(1), productList.get(0).getStock());
         assertEquals("test product info", productList.get(0).getDescription());
         assertEquals("test product", productList.get(0).getName());
