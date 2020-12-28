@@ -4,7 +4,7 @@ import com.ita.domain.config.FtpConfig;
 import com.ita.domain.service.FtpService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,20 +15,17 @@ import java.io.InputStream;
 @Service
 public class FtpServiceImpl implements FtpService {
 
-    @Lazy
-    private final FTPClient ftpClient;
+    @Autowired(required = false)
+    private FTPClient ftpClient;
 
-    private final FtpConfig ftpConfig;
-
-    public FtpServiceImpl(FTPClient ftpClient, FtpConfig ftpConfig) {
-        this.ftpClient = ftpClient;
-        this.ftpConfig = ftpConfig;
-    }
+    @Autowired
+    private FtpConfig ftpConfig;
 
     @Override
     public boolean uploadFile(MultipartFile file) {
         if (ftpClient == null) {
-            throw new NullPointerException("Can not connect to FTP server, upload fail!");
+            log.error("Disconnect from FTP server, upload {} fail!", file.getOriginalFilename());
+            throw new NullPointerException("Disconnect from FTP server, upload fail!");
         }
         String originName = file.getOriginalFilename();
         try {

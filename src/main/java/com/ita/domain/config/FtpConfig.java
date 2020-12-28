@@ -55,6 +55,7 @@ public class FtpConfig {
             log.info("FTP connected successfully");
             return ftpClient;
         } catch (IOException e) {
+            log.error("Failed to connect FTP server");
             log.error(e.getMessage(), e);
             return null;
         }
