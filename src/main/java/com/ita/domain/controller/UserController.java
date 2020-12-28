@@ -43,9 +43,9 @@ public class UserController {
     } else {
       User user = new User();
       user.setOpenid(openId);
-      user.setId(purchaserIdGenerateService.generateId());
+//      user.setId(purchaserIdGenerateService.generateId());
       user.setRole(UserRole.PURCHASER.getRole());
-      user.setUsername(UUID.randomUUID().toString());
+      user.setUsername("wxuser");
       int i = userService.create(user);
       return ResponseEntity.ok().body(user.getId());
     }

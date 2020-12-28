@@ -53,9 +53,8 @@ public class OrderController {
     }
 
     @PutMapping("/status/delivered")
-    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestParam List<Integer> orderIds) {
-        this.orderService.updateStatusByOrders(orderIds);
-        return ResponseEntity.ok(true);
+    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) {
+        return ResponseEntity.ok(this.orderService.updateStatusByOrders(orderIds));
     }
 
     @GetMapping("/shops/{shopId}")
