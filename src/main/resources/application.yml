@@ -57,7 +57,7 @@ aes:
   secret: ixHAvlnOMOGroRby
 
 ftp:
-  host: localhost
+  host: 106.53.102.70
   port: 21
   account: GH61l9PYk4baFr9nBODwwrqsstMouIOnQ3mALz8jPEU=
   path: /usr/local/openresty/nginx/html/resources
