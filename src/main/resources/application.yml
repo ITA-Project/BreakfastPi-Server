@@ -56,11 +56,5 @@ miniprogramer:
 aes:
   secret: ixHAvlnOMOGroRby
 
-ftp:
-  host: 106.53.102.70
-  port: 21
-  account: GH61l9PYk4baFr9nBODwwrqsstMouIOnQ3mALz8jPEU=
-  path: /usr/local/openresty/nginx/html/resources
-
 image:
   path: D:/usr/local/openresty/nginx/html/resources/
