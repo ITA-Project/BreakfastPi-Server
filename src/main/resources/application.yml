@@ -53,3 +53,10 @@ mqtt:
 miniprogramer:
   appId: wxeb9fc8420790d4fd
   appSecret: f32d7217755c1df12d45b7bd34a78a38
+
+ftp:
+  host: localhost
+  port: 21
+  username: root
+  password: Dillon123456xkl
+  path: /usr/local/openresty/nginx/html/resources
