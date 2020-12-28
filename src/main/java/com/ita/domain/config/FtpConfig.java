@@ -52,6 +52,7 @@ public class FtpConfig {
                 ftpClient.disconnect();
                 throw new SocketException("Failed to connect FTP server");
             }
+            ftpClient.changeWorkingDirectory(path);
             log.info("FTP connected successfully");
             return ftpClient;
         } catch (IOException e) {
