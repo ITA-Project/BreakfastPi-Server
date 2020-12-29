@@ -29,6 +29,7 @@ public class ImageServiceImpl implements ImageService {
             File tempFile = new File(dir, file.getOriginalFilename());
             os = new FileOutputStream(tempFile);
             os.write(file.getBytes(), 0, file.getBytes().length);
+            log.info("Successfully upload {} to {}", tempFile.getName(), tempFile.getAbsolutePath());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;

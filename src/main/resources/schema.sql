@@ -45,9 +45,7 @@ create table category
     sequence    int           null,
     shop_id     int           null,
     create_time timestamp     null,
-    update_time timestamp     null,
-    constraint category_shop_id_fk
-        foreign key (shop_id) references shop (id)
+    update_time timestamp     null
 );
 
 create table product
@@ -61,11 +59,10 @@ create table product
     stock       int          null,
     sales       int          null,
     status      tinyint      null,
+    status_description varchar(50) null,
     category_id int          null,
     create_time timestamp    null,
-    update_time timestamp    null,
-    constraint Product_category_id_fk
-        foreign key (category_id) references category (id)
+    update_time timestamp    null
 );
 
 create table cart
@@ -77,13 +74,7 @@ create table cart
     user_id     int       null,
     shop_id     int       null,
     create_time timestamp null,
-    update_time timestamp null,
-    constraint cart_product_id_fk
-        foreign key (product_id) references product (id),
-    constraint cart_shop_id_fk
-        foreign key (shop_id) references shop (id),
-    constraint cart_user_id_fk
-        foreign key (user_id) references user (id)
+    update_time timestamp null
 );
 
 create table `order`
@@ -103,11 +94,7 @@ create table `order`
     create_time    timestamp    null,
     update_time    timestamp    null,
     estimated_time timestamp    null,
-    status         tinyint      null,
-    constraint order_box_id_fk
-        foreign key (box_id) references box (id),
-    constraint order_user_id_fk
-        foreign key (user_id) references user (id)
+    status         tinyint      null
 );
 
 create table order_item
@@ -118,9 +105,7 @@ create table order_item
     order_number    char(19)   not null,
     quantity    int       null,
     create_time timestamp null,
-    update_time timestamp null,
-    constraint order_product_product_id_fk
-        foreign key (product_id) references product (id)
+    update_time timestamp null
 );
 
 create table pay_info
