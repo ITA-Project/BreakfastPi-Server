@@ -22,4 +22,6 @@ public interface ProductMapper {
     List<Product> selectAllByProductIds(List<Integer> productIds);
 
     int deleteByCategoryId(Integer categoryId);
+
+    List<Product> selectByStatus(Integer status);
 }

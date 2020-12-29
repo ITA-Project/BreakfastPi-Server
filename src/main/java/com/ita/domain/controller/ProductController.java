@@ -1,7 +1,9 @@
 package com.ita.domain.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.entity.Product;
+import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product selectBoxById(@PathVariable Integer id) {
+    public Product selectProductById(@PathVariable Integer id) {
         return productService.selectById(id);
     }
 
@@ -45,5 +47,12 @@ public class ProductController {
     @GetMapping("/recommend")
     public PageInfo<Product> getRecommendProducts(@RequestParam int page, @RequestParam int pageSize) {
         return productService.getRecommendProducts(page, pageSize);
+    }
+
+    @GetMapping("/status/{status}")
+    public PageInfo<ProductDTO> getProductByStatus(@PathVariable Integer status,
+        @RequestParam int page,
+        @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        return productService.getProductByStatus(status, page, pageSize);
     }
 }

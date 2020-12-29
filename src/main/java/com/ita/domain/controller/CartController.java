@@ -1,8 +1,7 @@
 package com.ita.domain.controller;
 
-import com.ita.domain.dto.CartDTO;
 import com.ita.domain.service.CartService;
-import com.ita.domain.vo.CartVO;
+import com.ita.domain.dto.user.CartDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +19,12 @@ public class CartController {
         this.cartService = cartService;
     }
     @PostMapping
-    public ResponseEntity<Boolean> save(@RequestBody List<CartVO> cartVOList) {
-        cartService.save(cartVOList);
+    public ResponseEntity<Boolean> save(@RequestBody List<CartDTO> cartDTOList) {
+        cartService.save(cartDTOList);
         return ResponseEntity.ok(true);
     }
     @GetMapping
-    public ResponseEntity<List<CartDTO>> getCartByCurrentUser(Integer userId) {
+    public ResponseEntity<List<com.ita.domain.dto.CartDTO>> getCartByCurrentUser(Integer userId) {
         return ResponseEntity.ok(cartService.getCartByUserId(userId));
     }
 

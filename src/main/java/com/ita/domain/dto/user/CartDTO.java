@@ -1,4 +1,4 @@
-package com.ita.domain.vo;
+package com.ita.domain.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartVO {
+public class CartDTO {
     private Integer userId;
     private Integer shopId;
     private Integer productId;

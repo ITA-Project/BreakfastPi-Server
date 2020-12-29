@@ -1,21 +1,25 @@
 package com.ita.domain.service;
 
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.entity.Product;
 
+import com.ita.domain.enums.ProductStatusEnum;
 import java.util.List;
 
 public interface ProductService {
 
-    public Product selectById(Integer id);
+  Product selectById(Integer id);
 
-    public List<Product> selectAll();
+  List<Product> selectAll();
 
-    public int create(Product product);
+  int create(Product product);
 
-    public int delete(Integer id);
+  int delete(Integer id);
 
-    public int update(Product product);
+  int update(Product product);
 
-    PageInfo<Product> getRecommendProducts(int page, int pageSize);
+  PageInfo<Product> getRecommendProducts(int page, int pageSize);
+
+  PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize);
 }

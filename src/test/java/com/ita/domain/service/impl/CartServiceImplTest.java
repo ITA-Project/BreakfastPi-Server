@@ -1,11 +1,10 @@
 package com.ita.domain.service.impl;
 
-import com.ita.domain.dto.CartDTO;
 import com.ita.domain.entity.Cart;
 import com.ita.domain.entity.Product;
 import com.ita.domain.mapper.CartMapper;
 import com.ita.domain.mapper.ProductMapper;
-import com.ita.domain.vo.CartVO;
+import com.ita.domain.dto.user.CartDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,9 +33,9 @@ public class CartServiceImplTest {
     @Test
     public void should_save_success_when_save_cart_given_product_id_and_quantity() throws Exception {
         //given
-        List<CartVO> cartVOList = Collections.singletonList(buildCartVO());
+        List<CartDTO> cartDTOList = Collections.singletonList(buildCartVO());
         //when
-        getCartService().save(cartVOList);
+        getCartService().save(cartDTOList);
         //then
         verify(cartMapper, times(1)).deleteByUserId(1);
         verify(cartMapper, times(1)).insert(any());
@@ -50,7 +49,7 @@ public class CartServiceImplTest {
         when(cartMapper.selectByUserId(anyInt())).thenReturn(Collections.singletonList(buildCart()));
         when(productMapper.selectByPrimaryKey(anyInt())).thenReturn(buildProduct());
         //when
-        List<CartDTO> cartDTOList = getCartService().getCartByUserId(userId);
+        List<com.ita.domain.dto.CartDTO> cartDTOList = getCartService().getCartByUserId(userId);
         //then
         assertEquals(1, cartDTOList.size());
         assertEquals(Integer.valueOf(1), cartDTOList.get(0).getQuantity());
@@ -72,8 +71,8 @@ public class CartServiceImplTest {
         return cartService;
     }
 
-    private CartVO buildCartVO() {
-        return CartVO.builder()
+    private CartDTO buildCartVO() {
+        return CartDTO.builder()
                 .userId(1)
                 .productId(1)
                 .quantity(1)

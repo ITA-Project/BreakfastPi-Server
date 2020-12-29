@@ -60,6 +60,22 @@
         from product
         where id = #{id,jdbcType=INTEGER}
     </select>
+  <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               name,
+               description,
+               image_url,
+               price,
+               stock,
+               sales,
+               status,
+               status_description,
+               category_id,
+               create_time,
+               update_time
+        from product
+        where status = #{status,jdbcType=VARCHAR}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
         select id,
                name,

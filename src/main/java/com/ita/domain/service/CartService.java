@@ -1,11 +1,10 @@
 package com.ita.domain.service;
 
-import com.ita.domain.dto.CartDTO;
-import com.ita.domain.vo.CartVO;
+import com.ita.domain.dto.user.CartDTO;
 
 import java.util.List;
 
 public interface CartService {
-    void save(List<CartVO> cartVOList);
-    List<CartDTO> getCartByUserId(Integer userId);
+    void save(List<CartDTO> cartDTOList);
+    List<com.ita.domain.dto.CartDTO> getCartByUserId(Integer userId);
 }

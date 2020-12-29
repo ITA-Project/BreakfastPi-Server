@@ -2,9 +2,12 @@ package com.ita.domain.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.entity.Product;
+import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.ProductService;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +53,11 @@ public class ProductServiceImpl implements ProductService{
         PageHelper.startPage(page, pageSize);
         List<Product> products = productMapper.getRecommendProducts();
         return new PageInfo<>(products);
+    }
+
+    @Override
+    public PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        return new PageInfo<>(productMapper.selectByStatus(productStatus).stream().map(ProductDTO::from).collect(Collectors.toList()));
     }
 }
