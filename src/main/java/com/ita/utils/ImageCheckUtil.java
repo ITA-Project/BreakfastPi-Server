@@ -1,5 +1,6 @@
 package com.ita.utils;
 
+import com.ita.domain.config.ImageConfig;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
@@ -8,14 +9,23 @@ import com.tencentcloudapi.tiia.v20190529.TiiaClient;
 import com.tencentcloudapi.tiia.v20190529.models.DetectMisbehaviorRequest;
 import com.tencentcloudapi.tiia.v20190529.models.DetectMisbehaviorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class ImageCheckUtil {
 
-    public static String check() {
-        try {
+    @Autowired
+    private ImageConfig imageConfig;
 
-            Credential cred = new Credential("AKIDHMLZ1Kc04j80B8gW2TfbastiOtoUE1Wu", "LYZMt9EdRo27tPoyHK70c1CH65kCOLsK");
+    @Value("${aes.secret}")
+    private String secret;
+
+    public String check() {
+        try {
+            String secretId = AESUtil.decrypt(imageConfig.getSecretId(), secret);
+            String secretKey = AESUtil.decrypt(imageConfig.getSecretKey(), secret);
+            Credential cred = new Credential(secretId, secretKey);
 
             HttpProfile httpProfile = new HttpProfile();
             httpProfile.setEndpoint("tiia.tencentcloudapi.com");

@@ -58,3 +58,5 @@ aes:
 
 image:
   path: D:/usr/local/openresty/nginx/html/resources/
+  secretId: 5TdRUmwhuofRSypV8/jHsT6FiV9jPRw1L5B2QuPl7Fqw4f7Ts8i+quK2PElCrNEo
+  secretKey: +hO5HZOwpVJ7qJYdYbSpu8slkD8IGJRd9KT+/6gicFLNzTeT/8xY3zV4ZtI5wqCW
