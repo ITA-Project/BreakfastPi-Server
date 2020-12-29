@@ -109,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
                 .userId(userId)
                 .boxId(box.getId())
                 .estimatedTime(expectedMealTime)
-                .status(OrderStatusEnum.PAID.getCode())
+                .status(OrderStatusEnum.NO_PAY.getCode())
                 .build();
         orderMapper.insert(order);
 

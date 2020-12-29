@@ -207,4 +207,15 @@
       </foreach>
       order by o.create_time desc
     </select>
+    <select id="selectOrdersByProductIdAndShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery" resultType="Long">
+        select count(*) from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on oi.product_id = p.id
+        left join category c on c.id = p.category_id
+        where o.status = 5 and
+         p.id = #{productId} and
+         c.shop_id = #{shopId} and
+         o.completed_time &gt;= #{startTime} and
+         o.completed_time &lt;= #{endTime}
+    </select>
 </mapper>
