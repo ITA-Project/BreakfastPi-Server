@@ -57,4 +57,4 @@ aes:
   secret: ixHAvlnOMOGroRby
 
 image:
-  path: D:/usr/local/openresty/nginx/html/resources/
+  path: /usr/local/openresty/nginx/html/resources/
