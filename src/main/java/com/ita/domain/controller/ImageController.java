@@ -1,6 +1,7 @@
 package com.ita.domain.controller;
 
 import com.ita.domain.service.ImageService;
+import com.tencentcloudapi.tiia.v20190529.models.DetectMisbehaviorResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,5 +21,10 @@ public class ImageController {
     @PostMapping
     public boolean upload(@RequestParam MultipartFile file) {
         return imageServiceImpl.upload(file);
+    }
+
+    @PostMapping("/check")
+    public DetectMisbehaviorResponse check(@RequestParam MultipartFile file) {
+        return imageServiceImpl.check(file);
     }
 }
