@@ -3,22 +3,31 @@ package com.ita.domain.service.impl;
 import com.ita.domain.entity.User;
 import com.ita.domain.mapper.UserMapper;
 import com.ita.domain.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired
-  private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-  @Override
-  public int create(User user) {
-    return this.userMapper.insert(user);
-  }
+    public UserServiceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
-  @Override
-  public User selectByOpenId(String openId) {
-    return userMapper.selectByOpenId(openId);
-  }
+    @Override
+    public int create(User user) {
+        return this.userMapper.insert(user);
+    }
+
+    @Override
+    public User selectByOpenId(String openId) {
+        return userMapper.selectByOpenId(openId);
+    }
+
+    @Override
+    public Optional<User> selectByUsername(String username) {
+        return Optional.ofNullable(userMapper.selectByUsername(username));
+    }
 }

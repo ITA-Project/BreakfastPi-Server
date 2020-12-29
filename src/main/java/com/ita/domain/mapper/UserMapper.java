@@ -15,5 +15,7 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    User selectByOpenId (String openId);
+    User selectByOpenId(String openId);
+
+    User selectByUsername(String openId);
 }
