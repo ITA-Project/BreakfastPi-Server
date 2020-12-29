@@ -79,8 +79,7 @@
             amount         = #{amount,jdbcType=DECIMAL},
             user_id        = #{userId,jdbcType=INTEGER},
             box_id         = #{boxId,jdbcType=INTEGER},
-            create_time    = #{createTime,jdbcType=TIMESTAMP},
-            update_time    = #{updateTime,jdbcType=TIMESTAMP},
+            update_time    = now(),
             estimated_time = #{estimatedTime,jdbcType=TIMESTAMP},
             status         = #{status,jdbcType=TINYINT}
         where id = #{id,jdbcType=INTEGER}

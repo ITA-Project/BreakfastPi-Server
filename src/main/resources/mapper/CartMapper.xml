@@ -29,8 +29,7 @@
             product_id  = #{productId,jdbcType=INTEGER},
             user_id     = #{userId,jdbcType=INTEGER},
             shop_id     = #{shopId,jdbcType=INTEGER},
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

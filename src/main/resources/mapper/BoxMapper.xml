@@ -18,14 +18,13 @@
     insert into box (id, address, number,
                      status, create_time, update_time)
     values (#{id,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER},
-            #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+            #{status,jdbcType=TINYINT}, now(), now())
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Box">
     update box
     set address     = #{address,jdbcType=VARCHAR},
         number      = #{number,jdbcType=INTEGER},
         status      = #{status,jdbcType=TINYINT},
-        create_time = #{createTime,jdbcType=TIMESTAMP},
         update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>

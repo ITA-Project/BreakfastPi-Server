@@ -25,8 +25,7 @@
                           update_time)
         values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
                 #{openid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
-                #{department,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
-                #{updateTime,jdbcType=TIMESTAMP})
+                #{department,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.User">
         update user
@@ -37,8 +36,7 @@
             address     = #{address,jdbcType=VARCHAR},
             department  = #{department,jdbcType=VARCHAR},
             role        = #{role,jdbcType=VARCHAR},
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

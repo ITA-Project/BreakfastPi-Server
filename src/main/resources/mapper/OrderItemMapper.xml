@@ -18,15 +18,14 @@
         insert into order_item (id, product_id, order_number,
                                 quantity, create_time, update_time)
         values (#{id,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{orderNumber,jdbcType=CHAR},
-                #{quantity,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+                #{quantity,jdbcType=INTEGER},now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.OrderItem">
         update order_item
         set product_id  = #{productId,jdbcType=INTEGER},
             order_number    = #{orderNumber,jdbcType=CHAR},
             quantity    = #{quantity,jdbcType=INTEGER},
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

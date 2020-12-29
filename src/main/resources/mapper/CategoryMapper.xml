@@ -20,8 +20,7 @@
                               sequence, shop_id, create_time,
                               update_time)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
-                #{sequence,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
-                #{updateTime,jdbcType=TIMESTAMP})
+                #{sequence,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}, now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Category">
         update category
@@ -29,8 +28,7 @@
             status      = #{status,jdbcType=TINYINT},
             sequence    = #{sequence,jdbcType=INTEGER},
             shop_id     = #{shopId,jdbcType=INTEGER},
-            create_time = #{createTime,jdbcType=TIMESTAMP},
-            update_time = #{updateTime,jdbcType=TIMESTAMP}
+            update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
