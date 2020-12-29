@@ -7,7 +7,9 @@ import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.ProductService;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +66,9 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Boolean updateProductStatus(ProductStatusDTO productStatusDTO) {
         Product product = productMapper.selectByPrimaryKey(Integer.parseInt(productStatusDTO.getId()));
+        if (product == null) {
+            return false;
+        }
         Product.from(product, productStatusDTO);
         int updateResult = productMapper.update(product);
         return updateResult > 0;
