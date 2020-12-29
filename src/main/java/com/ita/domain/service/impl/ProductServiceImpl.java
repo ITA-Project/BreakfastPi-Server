@@ -3,8 +3,8 @@ package com.ita.domain.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.suadmin.ProductDTO;
+import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
-import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.ProductService;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public int update(Product product) {
-        return productMapper.updateByPrimaryKey(product);
+        return productMapper.update(product);
     }
 
     @Override
@@ -59,5 +59,13 @@ public class ProductServiceImpl implements ProductService{
     public PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
         return new PageInfo<>(productMapper.selectByStatus(productStatus).stream().map(ProductDTO::from).collect(Collectors.toList()));
+    }
+
+    @Override
+    public Boolean updateProductStatus(ProductStatusDTO productStatusDTO) {
+        Product product = productMapper.selectByPrimaryKey(Integer.parseInt(productStatusDTO.getId()));
+        Product.from(product, productStatusDTO);
+        int updateResult = productMapper.update(product);
+        return updateResult > 0;
     }
 }

@@ -30,7 +30,7 @@
                 #{sales,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{statusDescription,jdbcType=TINYINT},
                 #{categoryId,jdbcType=INTEGER}, now(), now())
     </insert>
-    <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Product">
+    <update id="update" parameterType="com.ita.domain.entity.Product">
         update product
         set name        = #{name,jdbcType=VARCHAR},
             description = #{description,jdbcType=VARCHAR},

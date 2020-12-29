@@ -191,7 +191,7 @@ public class OrderServiceImpl implements OrderService {
             Product product = ProductDTO.toProduct(item.getProduct());
             product.setSales(product.getSales() + 1);
             product.setStock(product.getStock() - 1);
-            productMapper.updateByPrimaryKey(product);
+            productMapper.update(product);
         });
     }
 
