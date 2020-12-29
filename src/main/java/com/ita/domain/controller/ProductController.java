@@ -2,9 +2,11 @@ package com.ita.domain.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.suadmin.ProductDTO;
+import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
 import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,9 +52,14 @@ public class ProductController {
     }
 
     @GetMapping("/status/{status}")
-    public PageInfo<ProductDTO> getProductByStatus(@PathVariable Integer status,
+    public ResponseEntity<PageInfo<ProductDTO>> getProductByStatus(@PathVariable Integer status,
         @RequestParam int page,
         @RequestParam(required = false, defaultValue = "10") int pageSize) {
-        return productService.getProductByStatus(status, page, pageSize);
+        return ResponseEntity.ok(productService.getProductByStatus(status, page, pageSize));
+    }
+
+    @PutMapping("/status")
+    public ResponseEntity<Boolean> updateProductStatus(@RequestBody ProductStatusDTO productStatusDTO) {
+        return ResponseEntity.ok(productService.updateProductStatus(productStatusDTO));
     }
 }

@@ -1,5 +1,6 @@
 package com.ita.domain.entity;
 
+import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,28 +13,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
-    private Integer id;
 
-    private String name;
+  private Integer id;
 
-    private String description;
+  private String name;
 
-    private String imageUrl;
+  private String description;
 
-    private Double price;
+  private String imageUrl;
 
-    private Integer stock;
+  private Double price;
 
-    private Integer sales;
+  private Integer stock;
 
-    private Integer status;
+  private Integer sales;
 
-    private String statusDescription;
+  private Integer status;
 
-    private Integer categoryId;
+  private String statusDescription;
 
-    private LocalDateTime createTime;
+  private Integer categoryId;
 
-    private LocalDateTime updateTime;
+  private LocalDateTime createTime;
+
+  private LocalDateTime updateTime;
+
+  public static void from(Product product, ProductStatusDTO productStatusDTO) {
+    product.setStatus(productStatusDTO.getStatus());
+    product.setStatusDescription(productStatusDTO.getStatusMessage());
+  }
 
 }

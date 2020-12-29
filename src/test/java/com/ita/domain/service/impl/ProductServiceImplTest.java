@@ -91,7 +91,7 @@ public class ProductServiceImplTest {
         //given
         Product product = buildProduct();
         //mock
-        when(productMapper.updateByPrimaryKey(any())).thenReturn(1);
+        when(productMapper.update(any())).thenReturn(1);
         //when
         int result = getProductService().update(product);
         //then
