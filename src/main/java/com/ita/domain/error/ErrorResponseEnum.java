@@ -21,6 +21,7 @@ public enum ErrorResponseEnum implements ErrorResponse {
     BOX_NOT_ENOUGH(30003, "没有多余的柜子"),
     ORDER_NOT_EXIST(30004, "订单不存在"),
     ORDER_STATUS_INCORRECT(30005, "订单状态不正确"),
+    ORDER_NUMBER_INCORRECT(30006, "订单号不存在"),
     ;
 
     private final int errCode;
