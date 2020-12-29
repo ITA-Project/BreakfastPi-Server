@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ita.common.constant.Constant.FIRST;
@@ -66,13 +63,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO getOrderDetail(String orderNumber) throws BusinessException {
-        OrderDTO orderDetail = orderMapper.getOrderDetail(orderNumber);
-        if (Objects.isNull(orderDetail)) {
+        Order order = orderMapper.selectByOrderNumber(orderNumber);
+        if (Objects.isNull(order)) {
             throw new BusinessException(ErrorResponseEnum.UNKNOWN_ERROR);
         }
-        return orderDetail;
+        Box box = boxMapper.selectByPrimaryKey(order.getBoxId());
+        List<OrderItem> orderItems = orderItemMapper.selectAllByOrderNumber(orderNumber);
+        List<Integer> productIds = orderItems.stream().map(OrderItem::getProductId).collect(Collectors.toList());
+        Map<Integer, Product> productMap = new HashMap<>();
+        List<Product> products = productMapper.selectAllByProductIds(productIds);
+        products.forEach(product -> productMap.put(product.getId(), product));
+        List<OrderItemDTO> orderItemDTOs = orderItems.stream().map(orderItem -> OrderItemDTO.of(orderItem, ProductDTO.of(productMap.getOrDefault(orderItem.getProductId(), Product.builder().build()))))
+                .collect(Collectors.toList());
+        return OrderDTO.of(order, BoxDTO.of(box), orderItemDTOs);
     }
-
 
     @Transactional
     @Override

@@ -13,6 +13,8 @@ public interface OrderItemMapper {
 
     List<OrderItem> selectAll();
 
+    List<OrderItem> selectAllByOrderNumber(String orderNumber);
+
     int updateByPrimaryKey(OrderItem record);
 
     List<OrderItem> getUserTopTreeOrderItem(Integer id);

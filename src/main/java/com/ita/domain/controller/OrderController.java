@@ -43,7 +43,7 @@ public class OrderController {
 
 
     @GetMapping("/detail")
-    public ResponseEntity<OrderDTO> getOrderDetail(@RequestParam Integer userId, @RequestParam String orderNumber) throws BusinessException {
+    public ResponseEntity<OrderDTO> getOrderDetail(@RequestParam String orderNumber) throws BusinessException {
         return ResponseEntity.ok(orderService.getOrderDetail(orderNumber));
     }
 

@@ -22,10 +22,10 @@
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.OrderItem">
         update order_item
-        set product_id  = #{productId,jdbcType=INTEGER},
-            order_number    = #{orderNumber,jdbcType=CHAR},
-            quantity    = #{quantity,jdbcType=INTEGER},
-            update_time = now()
+        set product_id   = #{productId,jdbcType=INTEGER},
+            order_number = #{orderNumber,jdbcType=CHAR},
+            quantity     = #{quantity,jdbcType=INTEGER},
+            update_time  = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -33,13 +33,19 @@
         from order_item
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectAllByOrderNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id, product_id, order_number, quantity, create_time, update_time
+        from order_item
+        where order_number = #{orderNumber,jdbcType=CHAR}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
         select id, product_id, order_number, quantity, create_time, update_time
         from order_item
     </select>
     <select id="getUserTopTreeOrderItem" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select oi.id, oi.product_id, oi.order_number, oi.quantity, oi.create_time, oi.update_time
-        from order_item oi inner join `order` o on oi.order_number = o.order_number
+        from order_item oi
+                 inner join `order` o on oi.order_number = o.order_number
         where o.user_id = #{userId,jdbcType=INTEGER}
         group by oi.product_id
         order by count(oi.product_id) desc

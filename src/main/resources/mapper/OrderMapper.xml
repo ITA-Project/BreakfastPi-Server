@@ -104,7 +104,21 @@
         where id = #{id,jdbcType=INTEGER}
     </select>
     <select id="selectByOrderNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select id, order_number, status
+        select id,
+               order_number,
+               payment_time,
+               deliver_time,
+               store_time,
+               accepted_time,
+               completed_time,
+               cancel_time,
+               amount,
+               user_id,
+               box_id,
+               create_time,
+               update_time,
+               estimated_time,
+               status
         from `order`
         where order_number = #{orderNumber,jdbcType=CHAR}
     </select>
