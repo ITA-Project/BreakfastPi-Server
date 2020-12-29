@@ -52,10 +52,10 @@ public class ProductController {
     }
 
     @GetMapping("/status/{status}")
-    public PageInfo<ProductDTO> getProductByStatus(@PathVariable Integer status,
+    public ResponseEntity<PageInfo<ProductDTO>> getProductByStatus(@PathVariable Integer status,
         @RequestParam int page,
         @RequestParam(required = false, defaultValue = "10") int pageSize) {
-        return productService.getProductByStatus(status, page, pageSize);
+        return ResponseEntity.ok(productService.getProductByStatus(status, page, pageSize));
     }
 
     @PutMapping("/status")
