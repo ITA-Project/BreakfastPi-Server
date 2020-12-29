@@ -62,7 +62,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public ResponseEntity<UserDTO> normalLogin(String username, String password, HttpServletResponse response) {
-        Optional<User> user = userServiceImpl.selectByUsername(username);
+        Optional<User> user = userServiceImpl.selectByUsername(username)
+                .filter(u -> password.equals(u.getPassword()));
         if (!user.isPresent()) {
             return ResponseEntity.ok(UserDTO.builder().build());
         }

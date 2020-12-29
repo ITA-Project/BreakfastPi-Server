@@ -1,5 +1,6 @@
 package com.ita.domain.controller;
 
+import com.ita.domain.dto.UserAccountDTO;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.entity.User;
 import com.ita.domain.enums.UserRole;
@@ -8,10 +9,7 @@ import com.ita.domain.service.impl.PurchaserIdGenerateServiceImpl;
 import com.ita.domain.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -51,10 +49,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("normal-login")
-    public ResponseEntity<UserDTO> normalLogin(@RequestParam String username, @RequestParam String password,
-                                               HttpServletResponse response) {
-        return loginService.normalLogin(username, password, response);
+    @PostMapping("normal-login")
+    public ResponseEntity<UserDTO> normalLogin(@RequestBody UserAccountDTO account, HttpServletResponse response) {
+        return loginService.normalLogin(account.getUsername(), account.getPassword(), response);
     }
 
 }
