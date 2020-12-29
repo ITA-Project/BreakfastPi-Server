@@ -27,7 +27,7 @@
                              create_time, update_time)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
                 #{imageUrl,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
-                #{sales,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{statusDescription,jdbcType=TINYINT},
+                0, #{status,jdbcType=TINYINT}, #{statusDescription,jdbcType=TINYINT},
                 #{categoryId,jdbcType=INTEGER}, now(), now())
     </insert>
     <update id="update" parameterType="com.ita.domain.entity.Product">
