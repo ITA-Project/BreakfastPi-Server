@@ -217,6 +217,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public boolean updateStatusByOrderNumber(String orderNumber, Integer status) {
+        return orderMapper.updateStatusByOrderNumber(orderNumber, status) != 0;
+    }
+
+    @Override
     public int updateOrderStatus(Integer orderId, Order order) throws BusinessException {
         Order originalOrder = orderMapper.selectByPrimaryKey(orderId);
         if (Objects.isNull(originalOrder)) {

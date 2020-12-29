@@ -27,4 +27,6 @@ public interface OrderService {
     List<OrderDTO> getOrdersByIds(List<Integer> orderIds);
 
     PageInfo<OrderDTO> getShopOrders(Integer shop, int page, int pageSize, List<Integer> statusList);
+
+    boolean updateStatusByOrderNumber(String orderNumber, Integer status);
 }
