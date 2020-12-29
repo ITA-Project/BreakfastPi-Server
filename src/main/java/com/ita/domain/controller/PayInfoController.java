@@ -1,6 +1,7 @@
 package com.ita.domain.controller;
 
 import com.ita.domain.dto.PayInfoDTO;
+import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.PayInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class PayInfoController {
     private PayInfoService payInfoService;
 
     @PostMapping("/create")
-    public ResponseEntity<PayInfoDTO> createPayInfo(@RequestParam Integer userId, @RequestParam String orderNumber) {
+    public ResponseEntity<PayInfoDTO> createPayInfo(@RequestParam Integer userId, @RequestParam String orderNumber) throws BusinessException {
         return ResponseEntity.ok(payInfoService.createPayInfo(orderNumber, userId));
     }
 }

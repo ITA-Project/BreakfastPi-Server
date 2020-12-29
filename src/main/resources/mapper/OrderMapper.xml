@@ -103,6 +103,11 @@
         from `order`
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByOrderNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id, order_number, status
+        from `order`
+        where order_number = #{orderNumber,jdbcType=CHAR}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
         select id,
                order_number,

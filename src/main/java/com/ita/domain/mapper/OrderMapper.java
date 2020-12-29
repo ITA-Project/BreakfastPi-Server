@@ -13,6 +13,8 @@ public interface OrderMapper {
 
     Order selectByPrimaryKey(Integer id);
 
+    Order selectByOrderNumber(String orderNumber);
+
     List<Order> selectAll();
 
     int updateByPrimaryKey(Order record);
