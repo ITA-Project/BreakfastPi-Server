@@ -30,6 +30,8 @@ public class ProductDTO {
 
     private Integer status;
 
+    private String statusDescription;
+
     private Integer categoryId;
 
     private LocalDateTime createTime;

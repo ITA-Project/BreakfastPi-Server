@@ -30,6 +30,8 @@ public class Product {
 
     private Integer status;
 
+    private String statusDescription;
+
     private Integer categoryId;
 
     @CreatedDate

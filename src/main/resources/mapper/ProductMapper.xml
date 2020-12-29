@@ -10,6 +10,7 @@
         <result column="stock" jdbcType="INTEGER" property="stock"/>
         <result column="sales" jdbcType="INTEGER" property="sales"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="statusDescription" jdbcType="TINYINT" property="status_description"/>
         <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -22,12 +23,12 @@
     <insert id="insert" parameterType="com.ita.domain.entity.Product">
         insert into product (id, name, description,
                              image_url, price, stock,
-                             sales, status, category_id,
+                             sales, status, status_description, category_id,
                              create_time, update_time)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
                 #{imageUrl,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{stock,jdbcType=INTEGER},
-                #{sales,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{categoryId,jdbcType=INTEGER},
-                now(), now())
+                #{sales,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, #{statusDescription,jdbcType=TINYINT},
+                #{categoryId,jdbcType=INTEGER}, now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Product">
         update product
@@ -38,6 +39,7 @@
             stock       = #{stock,jdbcType=INTEGER},
             sales       = #{sales,jdbcType=INTEGER},
             status      = #{status,jdbcType=TINYINT},
+            status_description      = #{statusDescription,jdbcType=TINYINT},
             category_id = #{categoryId,jdbcType=INTEGER},
             update_time = now()
         where id = #{id,jdbcType=INTEGER}
@@ -51,6 +53,7 @@
                stock,
                sales,
                status,
+               status_description,
                category_id,
                create_time,
                update_time
@@ -66,6 +69,7 @@
                stock,
                sales,
                status,
+               status_description,
                category_id,
                create_time,
                update_time
@@ -81,6 +85,7 @@
         stock,
         sales,
         status,
+        status_description,
         category_id,
         create_time,
         update_time
@@ -107,6 +112,7 @@
                stock,
                sales,
                status,
+               status_description,
                category_id,
                create_time,
                update_time
@@ -121,6 +127,7 @@
         price,
         stock,
         sales,
+        status_description,
         status,
         category_id,
         create_time,
