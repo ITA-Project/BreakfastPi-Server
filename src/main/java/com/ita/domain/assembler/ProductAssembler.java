@@ -19,6 +19,7 @@ public class ProductAssembler {
                 .stock(product.getStock())
                 .sales(product.getSales())
                 .status(product.getStatus())
+                .statusDescription(product.getStatusDescription())
                 .categoryId(product.getCategoryId())
                 .createTime(product.getCreateTime())
                 .updateTime(product.getUpdateTime())
