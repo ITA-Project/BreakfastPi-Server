@@ -10,7 +10,9 @@ create table user
     department  varchar(20) null,
     role        varchar(20) null,
     create_time timestamp   null,
-    update_time timestamp   null
+    update_time timestamp   null,
+    status      tinyint     not null,
+    status_message varchar(200) null
 );
 
 create table box
@@ -34,7 +36,9 @@ create table shop
     phone       char(11)     not null,
     user_id     int          null,
     create_time timestamp    null,
-    update_time timestamp    null
+    update_time timestamp    null,
+    status      tinyint     not null,
+    status_message varchar(200) null
 );
 
 create table category
