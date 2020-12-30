@@ -2,6 +2,7 @@ package com.ita.domain.service;
 
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.entity.User;
+import com.ita.domain.error.BusinessException;
 
 import java.util.Optional;
 
@@ -15,6 +16,6 @@ public interface UserService {
 
     User selectById(Integer userId);
 
-    User updateUserStatus(UserInfoDTO user);
+    User updateUserStatus(UserInfoDTO user) throws BusinessException;
 
 }
