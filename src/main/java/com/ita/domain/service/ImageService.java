@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
 
-    boolean upload(MultipartFile file);
+    String upload(MultipartFile file);
 
     DetectMisbehaviorResponse check(MultipartFile file);
 }
