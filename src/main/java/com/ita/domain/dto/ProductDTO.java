@@ -30,7 +30,7 @@ public class ProductDTO {
 
     private Integer status;
 
-    private String statusDescription;
+    private String statusMessage;
 
     private Integer categoryId;
 
