@@ -30,4 +30,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> selectByUsername(String username) {
         return Optional.ofNullable(userMapper.selectByUsername(username));
     }
+
+    @Override
+    public User selectById(Integer userId) {
+        return Optional.ofNullable(userMapper.selectByPrimaryKey(userId)).orElse(null);
+    }
 }

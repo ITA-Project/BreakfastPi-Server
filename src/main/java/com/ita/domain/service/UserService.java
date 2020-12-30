@@ -12,4 +12,6 @@ public interface UserService {
 
     Optional<User> selectByUsername(String username);
 
+    User selectById(Integer userId);
+
 }
