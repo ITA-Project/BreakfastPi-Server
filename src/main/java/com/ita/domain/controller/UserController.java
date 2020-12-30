@@ -4,6 +4,7 @@ import com.ita.domain.dto.UserAccountDTO;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.enums.UserRoleEnum;
+import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class UserController {
   }
 
   @PutMapping
-  public ResponseEntity<UserInfoDTO> updateUserStatus(@RequestBody UserInfoDTO user) {
+  public ResponseEntity<UserInfoDTO> updateUserStatus(@RequestBody UserInfoDTO user) throws BusinessException {
     return ResponseEntity.ok(UserInfoDTO.from(userService.updateUserStatus(user)));
   }
 }
