@@ -19,7 +19,7 @@ public class ImageController {
     }
 
     @PostMapping
-    public String upload(@RequestParam MultipartFile file) {
+    public boolean upload(@RequestParam MultipartFile file) {
         return imageServiceImpl.upload(file);
     }
 
