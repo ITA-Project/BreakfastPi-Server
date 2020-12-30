@@ -78,7 +78,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId, order));
     }
 
-    @PatchMapping("/{orderNumber}")
+    @PutMapping("/{orderNumber}")
     public ResponseEntity<Boolean> updateStatusByOrderNumber(@PathVariable String orderNumber, @RequestParam Integer status) {
         return ResponseEntity.ok(orderService.updateStatusByOrderNumber(orderNumber, status));
     }
