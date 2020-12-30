@@ -1,19 +1,24 @@
 package com.ita.domain.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.UserAccountDTO;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.enums.UserRoleEnum;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
-import com.ita.domain.service.impl.UserServiceImpl;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -44,8 +49,15 @@ public class UserController {
     return loginService.normalLogin(account.getUsername(), account.getPassword(), response);
   }
 
-  @GetMapping("{/userId}")
+  @GetMapping("/{userId}")
   public ResponseEntity<UserInfoDTO> getUserInfoById(@PathVariable Integer userId) {
     return ResponseEntity.ok(UserInfoDTO.from(userService.selectById(userId)));
+  }
+
+  @GetMapping("/status/{status}")
+  public ResponseEntity<PageInfo<UserInfoDTO>> getUserInfoByStatus(@PathVariable Integer status,
+      @RequestParam int page,
+      @RequestParam(required = false, defaultValue = "10") int pageSize) {
+    return ResponseEntity.ok(userService.selectByStatus(status, page, pageSize));
   }
 }
