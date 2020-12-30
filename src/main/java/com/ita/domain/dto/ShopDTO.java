@@ -1,7 +1,6 @@
 package com.ita.domain.dto;
 
 import com.ita.domain.assembler.CategoryAssembler;
-import com.ita.domain.assembler.ProductAssembler;
 import com.ita.domain.entity.Category;
 import com.ita.domain.entity.Product;
 import com.ita.domain.entity.Shop;
@@ -52,7 +51,7 @@ public class ShopDTO {
     public static ShopDTO of(Shop shop, List<Category> categories, List<Product> products) {
         ShopDTO shopDTO = ShopDTO.of(shop);
         List<CategoryDTO> categoryDTOList = categories.stream().map(CategoryAssembler::convertToDTO).collect(Collectors.toList());
-        List<ProductDTO> productDTOList = products.stream().map(ProductAssembler::convertToDTO).collect(Collectors.toList());
+        List<ProductDTO> productDTOList = products.stream().map(ProductDTO::of).collect(Collectors.toList());
         return of(shopDTO, categoryDTOList, productDTOList);
     }
 
