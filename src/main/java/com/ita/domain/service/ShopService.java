@@ -19,4 +19,5 @@ public interface ShopService {
 
     int update(Shop shop);
 
+    ShopDTO getShopByUserId(Integer userId);
 }

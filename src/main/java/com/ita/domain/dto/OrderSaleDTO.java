@@ -1,17 +1,19 @@
-package com.ita.domain.dto.suadmin;
+package com.ita.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleData {
-  private List<Long> orderData;
-  private List<Double> moneyData;
+public class OrderSaleDTO {
+
+    private Integer type;
+
+    private Long saleCount;
+
+    private Double saleAmount;
 }

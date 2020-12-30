@@ -27,6 +27,11 @@ public class ShopController {
         return shopService.selectById(id);
     }
 
+    @GetMapping("/users/{userId}")
+    public ShopDTO getShopByUserId(@PathVariable Integer userId) {
+        return shopService.getShopByUserId(userId);
+    }
+
     @GetMapping
     public List<Shop> getAllShop() {
         return shopService.selectAll();

@@ -50,6 +50,11 @@
             </association>
         </collection>
     </resultMap>
+    <resultMap id="OrderSaleMap" type="com.ita.domain.dto.OrderSaleDTO">
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="sale_count" jdbcType="INTEGER" property="saleCount"/>
+        <result column="sale_amount" jdbcType="DECIMAL" property="saleAmount"/>
+    </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from `order`
@@ -227,7 +232,8 @@
       </foreach>
       order by o.create_time desc
     </select>
-    <select id="selectOrdersByProductIdAndShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery" resultType="Long">
+    <select id="selectOrdersByProductIdAndShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+            resultType="Long">
         select count(*) from `order` o
         left join order_item oi on o.order_number = oi.order_number
         left join product p on oi.product_id = p.id
@@ -237,5 +243,18 @@
          c.shop_id = #{shopId} and
          o.completed_time &gt;= #{startTime} and
          o.completed_time &lt;= #{endTime}
+    </select>
+    <select id="selectSaleByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+            resultMap="OrderSaleMap">
+       select date_format(o.completed_time, #{formatType}) type , count(*) sale_count, sum(o.amount) sale_amount
+        from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on oi.product_id = p.id
+        left join category c on c.id = p.category_id
+        where o.status = 5 and
+         c.shop_id = #{shopId} and
+         o.completed_time &gt;= #{startTime} and
+         o.completed_time &lt;= #{endTime}
+         group by date_format(o.completed_time, #{formatType});
     </select>
 </mapper>
