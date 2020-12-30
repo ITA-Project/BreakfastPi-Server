@@ -1,10 +1,12 @@
 package com.ita.domain.service.impl;
 
+import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.entity.User;
 import com.ita.domain.mapper.UserMapper;
 import com.ita.domain.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -34,5 +36,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User selectById(Integer userId) {
         return Optional.ofNullable(userMapper.selectByPrimaryKey(userId)).orElse(null);
+    }
+
+    @Override
+    public User updateUserStatus(UserInfoDTO user) {
+        User originalUser = Optional.ofNullable(userMapper.selectByPrimaryKey(Integer.valueOf(user.getId()))).orElse(null);
+        if (Objects.isNull(originalUser)) {
+            return null;
+        }
+        originalUser.setStatus(Integer.valueOf(user.getStatus()));
+        originalUser.setStatusMessage(user.getStatusMessage());
+        userMapper.updateByPrimaryKey(originalUser);
+        return userMapper.selectByPrimaryKey(Integer.valueOf(user.getId()));
     }
 }
