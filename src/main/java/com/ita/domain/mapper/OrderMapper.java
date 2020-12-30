@@ -45,4 +45,6 @@ public interface OrderMapper {
     List<Order> selectOrderByShopAndPeriodTime(OrderQuery orderQuery);
 
     List<Order> selectAllByStatus(Integer status);
+
+    OrderDTO selectRecentOrderByUserId(Integer userId);
 }

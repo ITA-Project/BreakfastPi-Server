@@ -42,6 +42,8 @@ public class OrderServiceImpl implements OrderService {
     private CategoryMapper categoryMapper;
     @Autowired
     private ShopMapper shopMapper;
+    @Autowired
+    private MqttMessageServiceImpl mqttMessageService;
 
     @Override
     public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
@@ -139,13 +141,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateStatusByOrders(List<Integer> orderIds){
+    public boolean updateStatusToDeliveredByOrders(List<Integer> orderIds){
         this.orderMapper.updateStatusByPrimaryKey(orderIds, OrderStatusEnum.DELIVERED.getCode(), OrderStatusEnum.SHIPPED.getCode());
         List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByIds(orderIds);
         orderDTOS.stream().forEach(orderDTO -> {
             Box box = this.boxMapper.selectByPrimaryKey(orderDTO.getBox().getId());
             box.setStatus(BoxStatusEnum.LOADED.getCode());
             this.boxMapper.updateByPrimaryKey(box);
+        });
+        return true;
+    }
+
+    @Override
+    public boolean updateStatusToCompletedByOrders(List<Integer> orderIds){
+        this.orderMapper.updateStatusByPrimaryKey(orderIds, OrderStatusEnum.COMPLETED.getCode(), OrderStatusEnum.DELIVERED.getCode());
+        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByIds(orderIds);
+        orderDTOS.stream().forEach(orderDTO -> {
+            Box box = this.boxMapper.selectByPrimaryKey(orderDTO.getBox().getId());
+            box.setStatus(BoxStatusEnum.FREE.getCode());
+            this.boxMapper.updateByPrimaryKey(box);
+            mqttMessageService.send(String.valueOf(box.getId()));
         });
         return true;
     }
@@ -247,5 +262,10 @@ public class OrderServiceImpl implements OrderService {
             originalOrder.setCancelTime(LocalDateTime.now());
         }
         return orderMapper.updateByPrimaryKey(originalOrder);
+    }
+
+    @Override
+    public OrderDTO getRecentOrderByUserId(Integer userId) {
+        return orderMapper.selectRecentOrderByUserId(userId);
     }
 }

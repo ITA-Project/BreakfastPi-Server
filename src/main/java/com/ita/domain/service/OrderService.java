@@ -20,7 +20,9 @@ public interface OrderService {
 
     PageInfo<OrderDTO> getOrdersByStatus(List<Integer> statusList, int page, int pageSize);
 
-    boolean updateStatusByOrders(List<Integer> orderIds);
+    boolean updateStatusToDeliveredByOrders(List<Integer> orderIds);
+
+    boolean updateStatusToCompletedByOrders(List<Integer> orderIds);
 
     int updateOrderStatus(Integer orderId, Order order) throws BusinessException;
 
@@ -29,4 +31,6 @@ public interface OrderService {
     PageInfo<OrderDTO> getShopOrders(Integer shop, int page, int pageSize, List<Integer> statusList);
 
     boolean updateStatusByOrderNumber(String orderNumber, Integer status);
+
+    OrderDTO getRecentOrderByUserId(Integer userId);
 }
