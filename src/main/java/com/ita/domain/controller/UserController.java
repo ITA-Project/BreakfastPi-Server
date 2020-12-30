@@ -11,20 +11,16 @@ import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.impl.UserServiceImpl;
 import com.ita.utils.JWTTokenUtils;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
@@ -52,7 +48,7 @@ public class UserController {
     } else {
       user.setOpenid(openId);
       user.setRole(UserRole.PURCHASER.getRole());
-      user.setUsername("wxuser");
+      user.setUsername("wxuser" + openId);
       int i = userService.create(user);
       token = JWTTokenUtils.getUserToken(user);
     }
