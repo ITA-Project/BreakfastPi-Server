@@ -182,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
     private Box determineBox(List<Box> freeBoxList) {
         Box box = freeBoxList.get(FIRST);
         box.setStatus(BoxStatusEnum.RESERVED.getCode());
-        box.setUpdateTime(LocalDateTime.now());
+//        box.setUpdateTime(LocalDateTime.now());
         boxMapper.updateByPrimaryKey(box);
         return box;
     }
