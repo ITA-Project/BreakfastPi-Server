@@ -1,14 +1,15 @@
 package com.ita.domain.enums;
 
-public enum UserRole {
-  PURCHASER("purchaser"),
+public enum UserRoleEnum {
+  USER("user"),
   ADMIN("admin"),
+  RIDER("rider"),
   MERCHANT("merchant");
 
 
   private String role;
 
-  private UserRole(String role) {this.role = role;}
+  UserRoleEnum(String role) {this.role = role;}
 
   public String getRole() {
     return role;

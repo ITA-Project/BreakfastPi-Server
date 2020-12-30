@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "miniprogramer")
-public class MiniProgramerConfig {
+@ConfigurationProperties(prefix = "riderminiprogramer")
+public class RiderMiniProgramerConfig {
   private String appId;
   private String appSecret;
 }

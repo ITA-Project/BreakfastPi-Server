@@ -1,59 +1,112 @@
 package com.ita.domain.service.impl;
 
-import com.ita.domain.config.MiniProgramerConfig;
+import static com.ita.common.constant.Constant.HEADER_AUTHORIZATION;
+
+import com.alibaba.fastjson.JSON;
+import com.auth0.jwt.JWT;
+import com.ita.domain.config.RiderMiniProgramerConfig;
+import com.ita.domain.config.UserMiniProgramerConfig;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.entity.User;
+import com.ita.domain.enums.UserRoleEnum;
+import com.ita.domain.error.BusinessException;
+import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
 import com.ita.utils.JWTTokenUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-
-import static com.ita.common.constant.Constant.HEADER_AUTHORIZATION;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
 public class LoginServiceImpl implements LoginService {
 
-    private final MiniProgramerConfig miniProgramerConfig;
+    private final UserMiniProgramerConfig userMiniProgramerConfig;
 
     private final UserService userServiceImpl;
 
-    public LoginServiceImpl(MiniProgramerConfig miniProgramerConfig, UserService userServiceImpl) {
-        this.miniProgramerConfig = miniProgramerConfig;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private final RiderMiniProgramerConfig riderMiniProgramerConfig;
+
+    private final String getOpenIdURL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+
+
+
+    public LoginServiceImpl(UserMiniProgramerConfig userMiniProgramerConfig, UserService userServiceImpl,
+        RedisTemplate<String, String> redisTemplate, RiderMiniProgramerConfig riderMiniProgramerConfig) {
+        this.userMiniProgramerConfig = userMiniProgramerConfig;
         this.userServiceImpl = userServiceImpl;
+        this.redisTemplate = redisTemplate;
+        this.riderMiniProgramerConfig = riderMiniProgramerConfig;
     }
 
     @Override
-    public String login(String code) throws Exception {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        String appId = miniProgramerConfig.getAppId();
-        String appSecret = miniProgramerConfig.getAppSecret();
-        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appId + "&secret=" + appSecret + "&js_code=" + code + "&grant_type"
-                + "=authorization_code";
+    public Map<String, String> login(String code, String role) throws Exception {
+        String openId = this.getOpenId(code, role);
+        User dbExistedUser = userServiceImpl.selectByOpenId(openId);
+        User user;
+        String token;
+        if (!Objects.isNull(dbExistedUser)) {
+            user = dbExistedUser;
+            token = JWTTokenUtils.getUserToken(dbExistedUser);
+        } else {
+            user = User.builder()
+                .openid(openId)
+                .role(role)
+                .username("wxuser" + openId).build();
+            userServiceImpl.create(user);
+            token = JWTTokenUtils.getUserToken(user);
+        }
+        if (StringUtils.isEmpty(token)) {
+            throw new BusinessException(ErrorResponseEnum.ACCESS_LOGIN_FAIL);
+        } else {
+            redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
+        }
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("token", token);
+        userInfo.put("userId", user.getId().toString());
+        return userInfo;
+    }
+
+    private String getOpenId(String code, String role) throws Exception {
+        String appSecret = "";
+        String appId = "";
+        if(role.equals(UserRoleEnum.USER.getRole())) {
+            appId = userMiniProgramerConfig.getAppId();
+            appSecret = userMiniProgramerConfig.getAppSecret();
+        } else if(role.equals(UserRoleEnum.RIDER.getRole())) {
+            appId = riderMiniProgramerConfig.getAppId();
+            appSecret = riderMiniProgramerConfig.getAppSecret();
+        }
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String url = String.format(getOpenIdURL, appId, appSecret, code);
         HttpGet httpGet = new HttpGet(url);
-        CloseableHttpResponse httpResponse = httpclient.execute(httpGet);
+        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
         try {
             HttpEntity entity = httpResponse.getEntity();
-            StatusLine statusLine = httpResponse.getStatusLine();
-//      int statusCode = statusLine.getStatusCode();
-//      EntityUtils.consume(entity);
+            if(httpResponse.getStatusLine().getStatusCode() != HttpStatus.OK.value()) {
+                throw new BusinessException(ErrorResponseEnum.ACCESS_LOGIN_FAIL);
+            }
             String jsonEntity = EntityUtils.toString(entity);
             JSONObject jsonObject = new JSONObject(jsonEntity);
             String openID = jsonObject.getString("openid");
-
             return openID;
         } finally {
             httpResponse.close();

@@ -22,6 +22,8 @@ public class Shop {
 
     private String phone;
 
+    private Integer userId;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
