@@ -4,18 +4,10 @@ import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
 import com.ita.domain.entity.Order;
-import com.ita.domain.entity.User;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
-import com.ita.utils.JWTTokenUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,9 +19,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderServiceImpl orderService;
-
-    @Autowired
-    private RedisTemplate<String,  Object> redisTemplate;
 
     public OrderController(OrderServiceImpl orderService) {
         this.orderService = orderService;
