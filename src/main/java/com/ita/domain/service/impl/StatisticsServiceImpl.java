@@ -8,8 +8,15 @@ import com.ita.domain.mapper.OrderMapper;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.service.StatisticsService;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,15 +43,18 @@ public class StatisticsServiceImpl implements StatisticsService {
   }
 
   private HotProduct generateHotProductStatistics(Integer shopId, String type) {
-    List<Product> products = productMapper.selectAll();
-    List<Long> data = new ArrayList<>();
-    products.forEach(
+    Map<Integer, Long> data = new HashMap<>();
+    productMapper.selectAll().forEach(
         product ->
-            data.add(orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
+            data.put(product.getId(), orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
     );
-    return HotProduct.builder()
-        .foodName(products.stream().map(Product::getName).collect(Collectors.toList()))
-        .data(data)
-        .build();
+
+    Map<Integer, Long> sortedMap= new HashMap<>();
+    data.entrySet().stream()
+        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+        .forEachOrdered(s->sortedMap.put(s.getKey(),s.getValue()));
+    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()), sortedMap);
   }
+
+
 }
