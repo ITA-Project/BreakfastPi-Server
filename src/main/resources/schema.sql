@@ -11,8 +11,8 @@ create table user
     role        varchar(20) null,
     create_time timestamp   null,
     update_time timestamp   null,
-    status      tinyint     not null,
-    status_message varchar(200) null
+    status      tinyint     null,
+    status_message varchar(50) null
 );
 
 create table box
@@ -37,8 +37,8 @@ create table shop
     user_id     int          null,
     create_time timestamp    null,
     update_time timestamp    null,
-    status      tinyint     not null,
-    status_message varchar(200) null
+    status      tinyint     null,
+    status_message varchar(50) null
 );
 
 create table category
