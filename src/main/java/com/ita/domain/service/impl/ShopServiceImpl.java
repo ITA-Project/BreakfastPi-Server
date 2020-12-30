@@ -63,8 +63,9 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public int update(Shop shop) {
-        return shopMapper.updateByPrimaryKey(shop);
+    public Shop update(Shop shop) {
+        shopMapper.updateByPrimaryKey(shop);
+        return shopMapper.selectByPrimaryKey(shop.getId());
     }
 
     @Override

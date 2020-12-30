@@ -17,7 +17,7 @@ public interface ShopService {
 
     int delete(Integer id);
 
-    int update(Shop shop);
+    Shop update(Shop shop);
 
     ShopDTO getShopByUserId(Integer userId);
 }
