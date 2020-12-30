@@ -142,10 +142,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean updateStatusToDeliveredByOrders(List<Integer> orderIds){
-        this.orderMapper.updateStatusByPrimaryKey(orderIds, OrderStatusEnum.DELIVERED.getCode(), OrderStatusEnum.SHIPPED.getCode());
-        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByIds(orderIds);
-        orderDTOS.stream().forEach(orderDTO -> {
-            Box box = this.boxMapper.selectByPrimaryKey(orderDTO.getBox().getId());
+        orderIds.stream().forEach(orderId -> {
+            Order order = this.orderMapper.selectByPrimaryKey(orderId);
+            if(order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
+                order.setStatus(OrderStatusEnum.DELIVERED.getCode());
+                order.setDeliverTime(LocalDateTime.now());
+                this.orderMapper.updateByPrimaryKey(order);
+            }
+            Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
             box.setStatus(BoxStatusEnum.LOADED.getCode());
             this.boxMapper.updateByPrimaryKey(box);
         });
@@ -154,10 +158,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean updateStatusToCompletedByOrders(List<Integer> orderIds){
-        this.orderMapper.updateStatusByPrimaryKey(orderIds, OrderStatusEnum.COMPLETED.getCode(), OrderStatusEnum.DELIVERED.getCode());
-        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByIds(orderIds);
-        orderDTOS.stream().forEach(orderDTO -> {
-            Box box = this.boxMapper.selectByPrimaryKey(orderDTO.getBox().getId());
+        orderIds.stream().forEach(orderId -> {
+            Order order = this.orderMapper.selectByPrimaryKey(orderId);
+            if(order.getStatus().equals(OrderStatusEnum.DELIVERED.getCode())) {
+                order.setStatus(OrderStatusEnum.COMPLETED.getCode());
+                order.setCompletedTime(LocalDateTime.now());
+                this.orderMapper.updateByPrimaryKey(order);
+            }
+            Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
             box.setStatus(BoxStatusEnum.FREE.getCode());
             this.boxMapper.updateByPrimaryKey(box);
             mqttMessageService.send(String.valueOf(box.getId()));
