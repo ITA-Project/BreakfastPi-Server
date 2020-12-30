@@ -37,6 +37,8 @@ public class OrderDTO {
 
     private BoxDTO box;
 
+    private ShopDTO shop;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -51,6 +53,15 @@ public class OrderDTO {
         OrderDTO orderDTO = new OrderDTO();
         BeanUtils.copyProperties(order, orderDTO);
         orderDTO.setBox(box);
+        orderDTO.setOrderItems(orderItems);
+        return orderDTO;
+    }
+
+    public static OrderDTO of(Order order, ShopDTO shop, BoxDTO box, List<OrderItemDTO> orderItems) {
+        OrderDTO orderDTO = new OrderDTO();
+        BeanUtils.copyProperties(order, orderDTO);
+        orderDTO.setBox(box);
+        orderDTO.setShop(shop);
         orderDTO.setOrderItems(orderItems);
         return orderDTO;
     }
