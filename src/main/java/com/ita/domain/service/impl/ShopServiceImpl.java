@@ -66,4 +66,9 @@ public class ShopServiceImpl implements ShopService {
     public int update(Shop shop) {
         return shopMapper.updateByPrimaryKey(shop);
     }
+
+    @Override
+    public ShopDTO getShopByUserId(Integer userId) {
+        return ShopDTO.of(shopMapper.selectByUserId(userId));
+    }
 }
