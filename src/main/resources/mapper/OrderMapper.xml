@@ -55,6 +55,10 @@
         <result column="sale_count" jdbcType="INTEGER" property="saleCount"/>
         <result column="sale_amount" jdbcType="DECIMAL" property="saleAmount"/>
     </resultMap>
+    <resultMap id="OrderUserMap" type="com.ita.domain.dto.suadmin.UserDataDTO">
+      <result column="type" jdbcType="INTEGER" property="type"/>
+      <result column="user_count" jdbcType="INTEGER" property="userCount"/>
+    </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from `order`
@@ -287,5 +291,24 @@
          c.shop_id = #{shopId} and
          o.completed_time &gt;= #{startTime} and
          o.completed_time &lt;= #{endTime};
+    </select>
+    <select id="selectUserByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+      resultMap="OrderUserMap">
+      select type, count(user_id) as user_count
+      FROM (select DISTINCT date_format(o.completed_time, #{formatType}) type , u.id user_id
+             FROM user u
+                    LEFT JOIN `order` o
+                              ON u.id = o.user_id
+                    LEFT JOIN order_item oi
+                              ON o.order_number = oi.order_number
+                    LEFT JOIN product p
+                              ON oi.product_id = p.id
+                    LEFT JOIN category c
+                              ON c.id = p.category_id
+      where o.status = 5 and
+        c.shop_id = #{shopId} and
+        o.completed_time &gt;= #{startTime} and
+        o.completed_time &lt;= #{endTime}
+      group by date_format(o.completed_time, #{formatType})) as temp group by user_id;
     </select>
 </mapper>

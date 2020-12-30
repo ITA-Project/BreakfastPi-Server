@@ -1,6 +1,5 @@
 package com.ita.domain.dto.suadmin;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserData {
-  private List<Long> data;
+public class UserDataDTO {
+  private Integer type;
+
+  private Long userCount;
+
 }

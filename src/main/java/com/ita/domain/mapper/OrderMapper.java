@@ -2,6 +2,7 @@ package com.ita.domain.mapper;
 
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.OrderSaleDTO;
+import com.ita.domain.dto.suadmin.UserDataDTO;
 import com.ita.domain.dto.suadmin.query.OrderQuery;
 import com.ita.domain.entity.Order;
 import org.apache.ibatis.annotations.Param;
@@ -38,6 +39,8 @@ public interface OrderMapper {
     Long selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery orderQuery);
 
     List<OrderSaleDTO> selectSaleByShopAndPeriodTime(OrderQuery orderQuery);
+
+    List<UserDataDTO> selectUserByShopAndPeriodTime(OrderQuery orderQuery);
 
     List<Order> selectOrderByShopAndPeriodTime(OrderQuery orderQuery);
 
