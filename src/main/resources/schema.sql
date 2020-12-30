@@ -2,15 +2,15 @@ create table user
 (
     id          int auto_increment
         primary key,
-    username    varchar(20) not null,
+    username    varchar(50) not null,
     password    varchar(25) null,
     openId      varchar(50) null,
-    phone       char(11)  null,
+    phone       char(11)    null,
     address     varchar(50) null,
     department  varchar(20) null,
     role        varchar(20) null,
-    create_time timestamp    null,
-    update_time timestamp    null
+    create_time timestamp   null,
+    update_time timestamp   null
 );
 
 create table box

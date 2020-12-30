@@ -2,10 +2,7 @@ package com.ita.domain.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ita.domain.dto.BoxDTO;
-import com.ita.domain.dto.OrderDTO;
-import com.ita.domain.dto.OrderItemDTO;
-import com.ita.domain.dto.ProductDTO;
+import com.ita.domain.dto.*;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
@@ -16,6 +13,7 @@ import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private IdWorker idWorker;
     @Resource
     private CategoryMapper categoryMapper;
+    @Autowired
+    private ShopMapper shopMapper;
 
     @Override
     public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
@@ -65,17 +65,22 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO getOrderDetail(String orderNumber) throws BusinessException {
         Order order = orderMapper.selectByOrderNumber(orderNumber);
         if (Objects.isNull(order)) {
-            throw new BusinessException(ErrorResponseEnum.UNKNOWN_ERROR);
+            throw new BusinessException(ErrorResponseEnum.ORDER_NOT_EXIST);
         }
         Box box = boxMapper.selectByPrimaryKey(order.getBoxId());
         List<OrderItem> orderItems = orderItemMapper.selectAllByOrderNumber(orderNumber);
         List<Integer> productIds = orderItems.stream().map(OrderItem::getProductId).collect(Collectors.toList());
         Map<Integer, Product> productMap = new HashMap<>();
         List<Product> products = productMapper.selectAllByProductIds(productIds);
+        if (CollectionUtils.isEmpty(products)) {
+            throw new BusinessException(ErrorResponseEnum.ORDER_DATA_INCORRECT);
+        }
+        Category category = categoryMapper.selectByPrimaryKey(products.get(0).getCategoryId());
+        Shop shop = shopMapper.selectByPrimaryKey(category.getShopId());
         products.forEach(product -> productMap.put(product.getId(), product));
         List<OrderItemDTO> orderItemDTOs = orderItems.stream().map(orderItem -> OrderItemDTO.of(orderItem, ProductDTO.of(productMap.getOrDefault(orderItem.getProductId(), Product.builder().build()))))
                 .collect(Collectors.toList());
-        return OrderDTO.of(order, BoxDTO.of(box), orderItemDTOs);
+        return OrderDTO.of(order, ShopDTO.of(shop), BoxDTO.of(box), orderItemDTOs);
     }
 
     @Transactional

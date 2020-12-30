@@ -6,6 +6,8 @@ import com.ita.domain.dto.ProductDTO;
 import com.ita.domain.entity.Order;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,9 @@ import java.util.List;
 public class OrderController {
 
     private final OrderServiceImpl orderService;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     public OrderController(OrderServiceImpl orderService) {
         this.orderService = orderService;
