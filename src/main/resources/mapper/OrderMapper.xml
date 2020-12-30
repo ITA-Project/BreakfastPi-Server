@@ -257,4 +257,16 @@
          o.completed_time &lt;= #{endTime}
          group by date_format(o.completed_time, #{formatType});
     </select>
+    <select id="selectOrderByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+            resultMap="BaseResultMap">
+       select o.completed_time completed_time, o.order_number order_number
+        from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on oi.product_id = p.id
+        left join category c on c.id = p.category_id
+        where o.status = 5 and
+         c.shop_id = #{shopId} and
+         o.completed_time &gt;= #{startTime} and
+         o.completed_time &lt;= #{endTime};
+    </select>
 </mapper>
