@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
 import com.ita.domain.entity.Order;
+import com.ita.domain.enums.BoxStatusEnum;
+import com.ita.domain.enums.OrderStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,12 @@ public class OrderController {
 
     @PutMapping("/status/delivered")
     public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) {
-        return ResponseEntity.ok(this.orderService.updateStatusByOrders(orderIds));
+        return ResponseEntity.ok(this.orderService.updateStatusToDeliveredByOrders(orderIds));
+    }
+
+    @PutMapping("/status/completed")
+    public ResponseEntity<Boolean> updateOrdersStatusToCompleted(@RequestBody List<Integer> orderIds) {
+        return ResponseEntity.ok(this.orderService.updateStatusToCompletedByOrders(orderIds));
     }
 
     @GetMapping("/shops/{shopId}")
@@ -77,4 +84,8 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateStatusByOrderNumber(orderNumber, status));
     }
 
+    @GetMapping("/recent")
+    public ResponseEntity<OrderDTO> getUserRecentOrder(@RequestParam Integer userId) {
+        return ResponseEntity.ok(orderService.getRecentOrderByUserId(userId));
+    }
 }

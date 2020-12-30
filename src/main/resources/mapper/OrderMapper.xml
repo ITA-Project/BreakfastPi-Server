@@ -257,4 +257,17 @@
          o.completed_time &lt;= #{endTime}
          group by date_format(o.completed_time, #{formatType});
     </select>
+    <select id="selectRecentOrderByUserId"  resultMap="OrderMap">
+      select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
+      o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
+      o.update_time, o.estimated_time, o.status,
+      b.id as bid, b.address, b.number,
+      oi.id as oi_id, oi.quantity,
+      p.id as pid, p.name, p.description, p.image_url, p.price
+      from `order` o inner join box b on o.box_id = b.id
+      inner join order_item oi on o.order_number = oi.order_number
+      inner join product p on p.id = oi.product_id
+      where o.user_id = #{userId,jdbcType=INTEGER}
+      order by o.update_time desc limit 1
+    </select>
 </mapper>
