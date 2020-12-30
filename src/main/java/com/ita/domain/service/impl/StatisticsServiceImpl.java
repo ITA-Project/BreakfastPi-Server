@@ -40,10 +40,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     List<Long> data = new ArrayList<>();
     products.forEach(
         product ->
-        {
-          Long count = orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type));
-          data.add(count);
-        }
+            data.add(orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
     );
     return HotProduct.builder()
         .foodName(products.stream().map(Product::getName).collect(Collectors.toList()))

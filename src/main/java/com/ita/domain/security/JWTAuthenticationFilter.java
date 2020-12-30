@@ -7,7 +7,6 @@ import com.ita.domain.entity.User;
 import com.ita.utils.JWTTokenUtils;
 import com.ita.utils.UsernamePasswordAuthenticationTokenUtils;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
