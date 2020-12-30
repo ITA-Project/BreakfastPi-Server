@@ -88,46 +88,18 @@ public class StatisticsServiceImpl implements StatisticsService {
     List<Order> orders = orderMapper.selectOrderByShopAndPeriodTime(OrderQuery.from(shopId, type));
     LocalTime defaultStartTime = LocalTime.parse("07:30:00");
     List<Long> data = new ArrayList<>();
-    data.add((long) getFirstPeriodTimeList(orders, defaultStartTime).size());
-    data.add((long) getSecondPeriodTimeList(orders, defaultStartTime.plusMinutes(15)).size());
-    data.add((long) getThirdPeriodTimeList(orders, defaultStartTime.plusMinutes(30)).size());
-    data.add((long) getFourthPeriodTimeList(orders, defaultStartTime.plusMinutes(45)).size());
-    data.add((long) getFifthPeriodTimeList(orders, defaultStartTime.plusHours(1)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime, defaultStartTime.plusMinutes(15)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(15), defaultStartTime.plusMinutes(30)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(30), defaultStartTime.plusMinutes(45)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(45), defaultStartTime.plusHours(1)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusHours(1), defaultStartTime.plusMinutes(75)).size());
     return OrderTime.builder().data(data).build();
   }
 
-  private List<Order> getFirstPeriodTimeList(List<Order> orders, LocalTime startTime) {
+  private List<Order> getOrderByPeriodTime(List<Order> orders, LocalTime startTime, LocalTime endTime) {
     return orders.stream()
             .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
-                    && n.getCompletedTime().toLocalTime().compareTo(startTime.plusMinutes(15)) <= 0)
-            .collect(Collectors.toList());
-  }
-
-  private List<Order> getSecondPeriodTimeList(List<Order> orders, LocalTime startTime) {
-    return orders.stream()
-            .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
-                    && n.getCompletedTime().toLocalTime().compareTo(startTime.plusMinutes(15)) <= 0)
-            .collect(Collectors.toList());
-  }
-
-  private List<Order> getThirdPeriodTimeList(List<Order> orders, LocalTime startTime) {
-    return orders.stream()
-            .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
-                    && n.getCompletedTime().toLocalTime().compareTo(startTime.plusMinutes(15)) <= 0)
-            .collect(Collectors.toList());
-  }
-
-  private List<Order> getFourthPeriodTimeList(List<Order> orders, LocalTime startTime) {
-    return orders.stream()
-            .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
-                    && n.getCompletedTime().toLocalTime().compareTo(startTime.plusMinutes(15)) <= 0)
-            .collect(Collectors.toList());
-  }
-
-  private List<Order> getFifthPeriodTimeList(List<Order> orders, LocalTime startTime) {
-    return orders.stream()
-            .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
-                    && n.getCompletedTime().toLocalTime().compareTo(startTime.plusMinutes(15)) <= 0)
+                    && n.getCompletedTime().toLocalTime().compareTo(endTime) <= 0)
             .collect(Collectors.toList());
   }
 }
