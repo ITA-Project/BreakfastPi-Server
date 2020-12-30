@@ -26,6 +26,10 @@ public class ShopDTO {
 
     private String phone;
 
+    private Integer status;
+
+    private String statusMessage;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -41,6 +45,8 @@ public class ShopDTO {
                 .name(shop.getName())
                 .description(shop.getDescription())
                 .address(shop.getAddress())
+                .status(shop.getStatus())
+                .statusMessage(shop.getStatusMessage())
                 .phone(shop.getPhone())
                 .createTime(shop.getCreateTime())
                 .updateTime(shop.getUpdateTime())

@@ -30,7 +30,7 @@ public class Product {
 
   private Integer status;
 
-  private String statusDescription;
+  private String statusMessage;
 
   private Integer categoryId;
 
@@ -40,7 +40,7 @@ public class Product {
 
   public static void from(Product product, ProductStatusDTO productStatusDTO) {
     product.setStatus(productStatusDTO.getStatus());
-    product.setStatusDescription(productStatusDTO.getStatusMessage());
+    product.setStatusMessage(productStatusDTO.getStatusMessage());
   }
 
 }

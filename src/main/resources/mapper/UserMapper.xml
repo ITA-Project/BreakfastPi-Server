@@ -10,6 +10,8 @@
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="department" jdbcType="VARCHAR" property="department"/>
         <result column="role" jdbcType="VARCHAR" property="role"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="status_message" jdbcType="VARCHAR" property="statusMessage"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
@@ -20,11 +22,11 @@
     </delete>
     <insert id="insert" parameterType="com.ita.domain.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into user (username, password,
-                          openId, phone, address,
+                          openId, phone, address, status, status_message,
                           department, role, create_time,
                           update_time)
         values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-                #{openid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+                #{openid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{statusMessage,jdbcType=VARCHAR},
                 #{department,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.User">
@@ -34,6 +36,8 @@
             openId      = #{openid,jdbcType=VARCHAR},
             phone       = #{phone,jdbcType=VARCHAR},
             address     = #{address,jdbcType=VARCHAR},
+            status      = #{status,jdbcType=INTEGER},
+            status_message = #{statusMessage,jdbcType=VARCHAR},
             department  = #{department,jdbcType=VARCHAR},
             role        = #{role,jdbcType=VARCHAR},
             update_time = now()
@@ -46,6 +50,8 @@
                openId,
                phone,
                address,
+               status,
+               status_message,
                department,
                role,
                create_time,
@@ -60,6 +66,8 @@
                openId,
                phone,
                address,
+               status,
+               status_message,
                department,
                role,
                create_time,
@@ -74,6 +82,8 @@
                openId,
                phone,
                address,
+               status,
+               status_message,
                department,
                role,
                create_time,
@@ -88,6 +98,8 @@
                openId,
                phone,
                address,
+               status,
+               status_message,
                department,
                role,
                create_time,
