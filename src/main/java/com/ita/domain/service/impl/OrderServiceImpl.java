@@ -237,6 +237,15 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorResponseEnum.ORDER_STATUS_INCORRECT);
         }
         originalOrder.setStatus(order.getStatus());
+        if (order.getStatus() == 2) {
+            originalOrder.setAcceptedTime(LocalDateTime.now());
+        }
+        if (order.getStatus() == 3) {
+            originalOrder.setDeliverTime(LocalDateTime.now());
+        }
+        if (order.getStatus() == 6) {
+            originalOrder.setCancelTime(LocalDateTime.now());
+        }
         return orderMapper.updateByPrimaryKey(originalOrder);
     }
 }
