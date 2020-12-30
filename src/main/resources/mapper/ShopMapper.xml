@@ -7,6 +7,7 @@
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="phone" jdbcType="CHAR" property="phone"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
@@ -32,12 +33,38 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select id, name, description, address, phone, create_time, update_time
+        select id,
+               name,
+               description,
+               address,
+               phone,
+               user_id,
+               create_time,
+               update_time
         from shop
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               name,
+               description,
+               address,
+               phone,
+               user_id,
+               create_time,
+               update_time
+        from shop
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
     <select id="selectAll" resultMap="BaseResultMap">
-        select id, name, description, address, phone, create_time, update_time
+        select id,
+               name,
+               description,
+               address,
+               phone,
+               user_id,
+               create_time,
+               update_time
         from shop
     </select>
 </mapper>

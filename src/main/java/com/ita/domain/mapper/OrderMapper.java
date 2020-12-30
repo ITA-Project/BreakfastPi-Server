@@ -38,4 +38,8 @@ public interface OrderMapper {
     Long selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery orderQuery);
 
     List<OrderSaleDTO> selectSaleByShopAndPeriodTime(OrderQuery orderQuery);
+
+    List<Order> selectOrderByShopAndPeriodTime(OrderQuery orderQuery);
+
+    List<Order> selectAllByStatus(Integer status);
 }

@@ -49,7 +49,7 @@ public class PayInfoServiceImpl implements PayInfoService {
         payInfoMapper.insert(payInfo);
 
         if (OrderStatusEnum.NO_PAY.getCode().equals(order.getStatus())) {
-            orderMapper.updateStatusByPrimaryKey(Collections.singletonList(order.getId()), order.getStatus(), OrderStatusEnum.PAID.getCode());
+            orderMapper.updateStatusByPrimaryKey(Collections.singletonList(order.getId()), OrderStatusEnum.PAID.getCode(), order.getStatus());
         }
         return PayInfoDTO.of(payInfo);
     }

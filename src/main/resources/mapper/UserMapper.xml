@@ -18,12 +18,12 @@
         from user
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" parameterType="com.ita.domain.entity.User">
-        insert into user (id, username, password,
+    <insert id="insert" parameterType="com.ita.domain.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (username, password,
                           openId, phone, address,
                           department, role, create_time,
                           update_time)
-        values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
                 #{openid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
                 #{department,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, now(), now())
     </insert>

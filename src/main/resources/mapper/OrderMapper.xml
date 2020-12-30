@@ -151,6 +151,25 @@
                status
         from `order`
     </select>
+    <select id="selectAllByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               order_number,
+               payment_time,
+               deliver_time,
+               store_time,
+               accepted_time,
+               completed_time,
+               cancel_time,
+               amount,
+               user_id,
+               box_id,
+               create_time,
+               update_time,
+               estimated_time,
+               status
+        from `order` o
+        where o.status = #{status,jdbcType=INTEGER}
+    </select>
     <select id="getOrdersByUser"  resultMap="OrderMap">
         select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
         o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
@@ -256,5 +275,17 @@
          o.completed_time &gt;= #{startTime} and
          o.completed_time &lt;= #{endTime}
          group by date_format(o.completed_time, #{formatType});
+    </select>
+    <select id="selectOrderByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+            resultMap="BaseResultMap">
+       select o.completed_time completed_time, o.order_number order_number
+        from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on oi.product_id = p.id
+        left join category c on c.id = p.category_id
+        where o.status = 5 and
+         c.shop_id = #{shopId} and
+         o.completed_time &gt;= #{startTime} and
+         o.completed_time &lt;= #{endTime};
     </select>
 </mapper>

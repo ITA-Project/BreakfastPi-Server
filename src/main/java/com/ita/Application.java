@@ -1,6 +1,7 @@
 package com.ita;
 
-import com.ita.domain.config.MiniProgramerConfig;
+import com.ita.domain.config.RiderMiniProgramerConfig;
+import com.ita.domain.config.UserMiniProgramerConfig;
 import com.ita.domain.config.MqttConfig;
 import com.ita.utils.IdWorker;
 import org.mybatis.spring.annotation.MapperScan;
@@ -8,7 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -18,7 +19,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @MapperScan(basePackages = "com.ita.domain.mapper")
-@EnableConfigurationProperties({MqttConfig.class, MiniProgramerConfig.class})
+@EnableConfigurationProperties({MqttConfig.class, UserMiniProgramerConfig.class, RiderMiniProgramerConfig.class})
+@EnableScheduling
 //@EnableGlobalMethodSecurity(securedEnabled = true)
 public class Application {
     public static void main(String[] args) {
