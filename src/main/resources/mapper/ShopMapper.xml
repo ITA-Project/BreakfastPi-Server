@@ -6,6 +6,8 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="status_message" jdbcType="VARCHAR" property="statusMessage"/>
         <result column="phone" jdbcType="CHAR" property="phone"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -18,16 +20,18 @@
     </delete>
     <insert id="insert" parameterType="com.ita.domain.entity.Shop">
         insert into shop (id, name, description,
-                          address, phone, create_time,
+                          address, phone, create_time, status, status_message,
                           update_time)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-                #{address,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, now(), now())
+                #{address,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{statusMessage,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, now(), now())
     </insert>
     <update id="updateByPrimaryKey" parameterType="com.ita.domain.entity.Shop">
         update shop
         set name        = #{name,jdbcType=VARCHAR},
             description = #{description,jdbcType=VARCHAR},
             address     = #{address,jdbcType=VARCHAR},
+            status      = #{status,jdbcType=INTEGER},
+            status_message = #{statusMessage,jdbcType=VARCHAR},
             phone       = #{phone,jdbcType=CHAR},
             update_time = now()
         where id = #{id,jdbcType=INTEGER}
@@ -37,6 +41,8 @@
                name,
                description,
                address,
+               status,
+               status_message,
                phone,
                user_id,
                create_time,
@@ -49,6 +55,8 @@
                name,
                description,
                address,
+               status,
+               status_message,
                phone,
                user_id,
                create_time,
@@ -61,6 +69,8 @@
                name,
                description,
                address,
+               status,
+               status_message,
                phone,
                user_id,
                create_time,
