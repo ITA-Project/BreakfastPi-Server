@@ -1,21 +1,10 @@
 package com.ita.domain.security;
 
-import com.ita.domain.dto.OrderDTO;
-import com.ita.domain.entity.Order;
 import com.ita.domain.security.handler.CustomAccessDeniedHandler;
 import com.ita.domain.security.handler.CustomAuthenticationEntryPoint;
 import com.ita.domain.security.handler.SecurityWhitelistHandler;
-import com.ita.domain.service.OrderService;
-import com.ita.domain.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.SpringBootContextLoader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable();
     http.authorizeRequests()
         .antMatchers(securityWhitelistHandler.getWhiteList())
         .permitAll()
