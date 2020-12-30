@@ -4,9 +4,9 @@ import com.ita.domain.dto.UserAccountDTO;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.enums.UserRoleEnum;
+import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
-import com.ita.domain.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +47,10 @@ public class UserController {
   @GetMapping("{/userId}")
   public ResponseEntity<UserInfoDTO> getUserInfoById(@PathVariable Integer userId) {
     return ResponseEntity.ok(UserInfoDTO.from(userService.selectById(userId)));
+  }
+
+  @PutMapping
+  public ResponseEntity<UserInfoDTO> updateUserStatus(@RequestBody UserInfoDTO user) throws BusinessException {
+    return ResponseEntity.ok(UserInfoDTO.from(userService.updateUserStatus(user)));
   }
 }
