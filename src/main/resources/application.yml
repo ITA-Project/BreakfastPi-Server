@@ -49,9 +49,13 @@ mqtt:
   connStr: fR0pWHACB35Y46StaLsT0A==
   clientId: mqttx_4a02f566
 
-miniprogramer:
+userminiprogramer:
   appId: wxeb9fc8420790d4fd
   appSecret: f32d7217755c1df12d45b7bd34a78a38
+
+riderminiprogramer:
+  appId: wxdac7c54380b8178f
+  appSecret: bfda87712453665c7034dc90342b3505
 
 aes:
   secret: ixHAvlnOMOGroRby
