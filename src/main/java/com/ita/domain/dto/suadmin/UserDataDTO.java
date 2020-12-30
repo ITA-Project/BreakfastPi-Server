@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderTime {
-  private List<Long> data;
+public class UserDataDTO {
+  private Integer type;
+
+  private Long userCount;
+
 }

@@ -2,9 +2,13 @@ package com.ita.domain.service.impl;
 
 import com.ita.domain.dto.OrderSaleDTO;
 import com.ita.domain.dto.suadmin.HotProduct;
+import com.ita.domain.dto.suadmin.OrderTime;
 import com.ita.domain.dto.suadmin.SaleData;
 import com.ita.domain.dto.suadmin.SaleDataDTO;
+import com.ita.domain.dto.suadmin.UserData;
+import com.ita.domain.dto.suadmin.UserDataDTO;
 import com.ita.domain.dto.suadmin.query.OrderQuery;
+import com.ita.domain.entity.Order;
 import com.ita.domain.enums.FormatTimeTypeEnum;
 import com.ita.domain.mapper.OrderMapper;
 import com.ita.domain.mapper.ProductMapper;
@@ -14,8 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
+import org.w3c.dom.UserDataHandler;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.util.Collections.EMPTY_LIST;
@@ -39,7 +46,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
   @Override
   public SaleDataDTO generateStatisticsData(Integer shopId, String type) {
-    return SaleDataDTO.builder().hot(generateHotProductStatistics(shopId, type)).sale(generateSaleDataStatistics(shopId, type)).build();
+    return SaleDataDTO.builder().hot(generateHotProductStatistics(shopId, type))
+            .orderTime(generateOrderTimeStatistics(shopId, type))
+            .user(generateUserDataStatistics(shopId, type))
+            .sale(generateSaleDataStatistics(shopId, type)).build();
   }
 
   private HotProduct generateHotProductStatistics(Integer shopId, String type) {
@@ -76,6 +86,41 @@ public class StatisticsServiceImpl implements StatisticsService {
         moneyData.add(bigDecimal.setScale(2, ROUND_HALF_UP).doubleValue());
       }
     }
-    return SaleData.builder().orderData(orderData).moneyData(moneyData).build();
+    Collections.reverse(orderData);
+    Collections.reverse(moneyData);
+    List<Long> orderDataResult = type.equals(FormatTimeTypeEnum.YEAR.getValue()) ? orderData.subList(0, 6) : orderData;
+    List<Double> moneyResult = type.equals(FormatTimeTypeEnum.YEAR.getValue()) ? moneyData.subList(0, 6) : moneyData;
+    return SaleData.builder().orderData(orderDataResult).moneyData(moneyResult).build();
   }
+
+  private OrderTime generateOrderTimeStatistics(Integer shopId, String type) {
+    List<Order> orders = orderMapper.selectOrderByShopAndPeriodTime(OrderQuery.from(shopId, type));
+    LocalTime defaultStartTime = LocalTime.parse("07:30:00");
+    List<Long> data = new ArrayList<>();
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime, defaultStartTime.plusMinutes(15)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(15), defaultStartTime.plusMinutes(30)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(30), defaultStartTime.plusMinutes(45)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusMinutes(45), defaultStartTime.plusHours(1)).size());
+    data.add((long) getOrderByPeriodTime(orders, defaultStartTime.plusHours(1), defaultStartTime.plusMinutes(75)).size());
+    return OrderTime.builder().data(data).build();
+  }
+
+  private List<Order> getOrderByPeriodTime(List<Order> orders, LocalTime startTime, LocalTime endTime) {
+    return orders.stream()
+            .filter(n -> n.getCompletedTime().toLocalTime().compareTo(startTime) > 0
+                    && n.getCompletedTime().toLocalTime().compareTo(endTime) <= 0)
+            .collect(Collectors.toList());
+  }
+
+  private UserData generateUserDataStatistics(Integer shopId, String type) {
+    Integer count = FormatTimeTypeEnum.getByValue(type).getCount();
+    List<Long> userData = orderMapper.selectUserByShopAndPeriodTime(OrderQuery.from(shopId, type)).stream().map(UserDataDTO::getUserCount)
+        .collect(Collectors.toList());
+    while (userData.size() < count) {
+      userData.add(0L);
+    }
+    List<Long> userDataResult = type.equals(FormatTimeTypeEnum.YEAR.getValue()) ? userData.subList(0, 6) : userData;
+    return UserData.builder().data(userDataResult).build();
+  }
+
 }

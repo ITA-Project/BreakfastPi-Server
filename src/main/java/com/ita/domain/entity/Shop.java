@@ -27,4 +27,8 @@ public class Shop {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private Integer status;
+
+    private String statusMessage;
 }

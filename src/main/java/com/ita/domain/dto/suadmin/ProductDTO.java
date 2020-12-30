@@ -23,7 +23,7 @@ public class ProductDTO {
         .name(product.getName())
         .description(product.getDescription())
         .imageUrl(product.getImageUrl())
-        .statusMessage(product.getStatusDescription())
+        .statusMessage(product.getStatusMessage())
         .build();
   }
 }

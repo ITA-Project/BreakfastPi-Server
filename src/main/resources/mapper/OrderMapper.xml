@@ -55,6 +55,10 @@
         <result column="sale_count" jdbcType="INTEGER" property="saleCount"/>
         <result column="sale_amount" jdbcType="DECIMAL" property="saleAmount"/>
     </resultMap>
+    <resultMap id="OrderUserMap" type="com.ita.domain.dto.suadmin.UserDataDTO">
+      <result column="type" jdbcType="INTEGER" property="type"/>
+      <result column="user_count" jdbcType="INTEGER" property="userCount"/>
+    </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from `order`
@@ -150,6 +154,25 @@
                estimated_time,
                status
         from `order`
+    </select>
+    <select id="selectAllByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               order_number,
+               payment_time,
+               deliver_time,
+               store_time,
+               accepted_time,
+               completed_time,
+               cancel_time,
+               amount,
+               user_id,
+               box_id,
+               create_time,
+               update_time,
+               estimated_time,
+               status
+        from `order` o
+        where o.status = #{status,jdbcType=INTEGER}
     </select>
     <select id="getOrdersByUser"  resultMap="OrderMap">
         select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
@@ -256,6 +279,37 @@
          o.completed_time &gt;= #{startTime} and
          o.completed_time &lt;= #{endTime}
          group by date_format(o.completed_time, #{formatType});
+    </select>
+    <select id="selectOrderByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+            resultMap="BaseResultMap">
+       select o.completed_time completed_time, o.order_number order_number
+        from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on oi.product_id = p.id
+        left join category c on c.id = p.category_id
+        where o.status = 5 and
+         c.shop_id = #{shopId} and
+         o.completed_time &gt;= #{startTime} and
+         o.completed_time &lt;= #{endTime};
+    </select>
+    <select id="selectUserByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
+      resultMap="OrderUserMap">
+      select type, count(user_id) as user_count
+      FROM (select DISTINCT date_format(o.completed_time, #{formatType}) type , u.id user_id
+             FROM user u
+                    LEFT JOIN `order` o
+                              ON u.id = o.user_id
+                    LEFT JOIN order_item oi
+                              ON o.order_number = oi.order_number
+                    LEFT JOIN product p
+                              ON oi.product_id = p.id
+                    LEFT JOIN category c
+                              ON c.id = p.category_id
+      where o.status = 5 and
+        c.shop_id = #{shopId} and
+        o.completed_time &gt;= #{startTime} and
+        o.completed_time &lt;= #{endTime}
+      group by date_format(o.completed_time, #{formatType})) as temp group by user_id;
     </select>
     <select id="selectRecentOrderByUserId"  resultMap="OrderMap">
       select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,

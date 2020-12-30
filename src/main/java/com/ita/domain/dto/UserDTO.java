@@ -24,6 +24,10 @@ public class UserDTO {
 
     private String address;
 
+    private String statusMessage;
+
+    private Integer status;
+
     private String department;
 
     private String role;
