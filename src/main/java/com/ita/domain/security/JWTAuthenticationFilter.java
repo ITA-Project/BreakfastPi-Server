@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.ita.domain.constant.HttpParameterConstant;
 import com.ita.domain.entity.User;
-import com.ita.domain.error.BusinessException;
-import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.utils.JWTTokenUtils;
 import com.ita.utils.UsernamePasswordAuthenticationTokenUtils;
 import java.io.IOException;
@@ -43,7 +41,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request,HttpServletResponse response){
-    String tokenString = request.getHeader(JWTTokenUtils.AUTHORIZATION);
+    String bearerTokenString = request.getHeader(JWTTokenUtils.AUTHORIZATION);
+    String tokenString = bearerTokenString;
+    if(!StringUtils.isEmpty(bearerTokenString) && bearerTokenString.contains(JWTTokenUtils.BEARER)) {
+      tokenString = bearerTokenString.replace(JWTTokenUtils.BEARER, "").trim();
+    }
     if(StringUtils.isEmpty(tokenString)) {
       return null;
     }
