@@ -62,7 +62,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
   private HotProduct generateHotProductStatistics(Integer shopId, String type) {
     Map<Integer, Long> data = new HashMap<>();
-    productMapper.selectByStatus(1).forEach(
+    productMapper.selectAll().forEach(
             product ->
                     data.put(product.getId(), orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
     );
