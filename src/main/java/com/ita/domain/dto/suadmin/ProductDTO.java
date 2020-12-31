@@ -15,12 +15,14 @@ public class ProductDTO {
   private String name;
   private String description;
   private String imageUrl;
+  private Integer status;
   private String statusMessage;
 
   public static ProductDTO from(Product product) {
     return ProductDTO.builder()
-        .id(String.valueOf(product.getId()))
-        .name(product.getName())
+            .id(String.valueOf(product.getId()))
+            .name(product.getName())
+            .status(product.getStatus())
         .description(product.getDescription())
         .imageUrl(product.getImageUrl())
         .statusMessage(product.getStatusMessage())

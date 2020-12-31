@@ -44,7 +44,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String tokenString = request.getHeader(JWTTokenUtils.AUTHORIZATION);
+        String bearerTokenString = request.getHeader(JWTTokenUtils.AUTHORIZATION);
+        String tokenString = bearerTokenString;
+        if (!StringUtils.isEmpty(bearerTokenString) && bearerTokenString.contains(JWTTokenUtils.BEARER)) {
+            tokenString = bearerTokenString.replace(JWTTokenUtils.BEARER, "").trim();
+        }
         if (StringUtils.isEmpty(tokenString)) {
             return null;
         }
