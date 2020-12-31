@@ -88,4 +88,9 @@ public class OrderController {
     public ResponseEntity<OrderDTO> getUserRecentOrder(@RequestParam Integer userId) {
         return ResponseEntity.ok(orderService.getRecentOrderByUserId(userId));
     }
+
+    @GetMapping("test")
+    public String test() {
+        return "ok";
+    }
 }

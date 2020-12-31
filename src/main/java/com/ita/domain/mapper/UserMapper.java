@@ -18,4 +18,6 @@ public interface UserMapper {
     User selectByOpenId(String openId);
 
     User selectByUsername(String openId);
+
+    List<User> selectAllByStatus(Integer status);
 }
