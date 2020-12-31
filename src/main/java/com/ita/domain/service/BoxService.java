@@ -19,4 +19,6 @@ public interface BoxService {
     int update(Box box);
 
     boolean openAssociateOrdersBoxes(List<Integer> orderIds);
+
+    boolean updateStatusById(Integer id, Integer status);
 }

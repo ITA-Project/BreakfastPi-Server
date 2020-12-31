@@ -106,4 +106,20 @@
                update_time
         from user
     </select>
+    <select id="selectAllByStatus" resultMap="BaseResultMap">
+          select id,
+                 username,
+                 password,
+                 openId,
+                 phone,
+                 address,
+                 status,
+                 status_message,
+                 department,
+                 role,
+                 create_time,
+                 update_time
+          from user
+          where status = #{status,jdbcType=INTEGER}
+      </select>
 </mapper>
