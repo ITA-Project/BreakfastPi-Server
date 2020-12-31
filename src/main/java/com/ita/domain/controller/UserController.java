@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<PageInfo<UserDTO>> getPageableUser(@RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<PageInfo<UserDTO>> getPageableUser(@RequestParam int page, @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.selectAll(page, pageSize));
     }
 }
