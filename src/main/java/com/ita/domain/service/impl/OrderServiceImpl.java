@@ -170,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds){
+    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds) {
         return this.orderMapper.selectOrdersByIds(orderIds);
     }
 
