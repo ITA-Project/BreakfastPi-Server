@@ -1,16 +1,18 @@
 package com.ita.domain.service.impl;
 
+import static com.ita.domain.error.ErrorResponseEnum.USER_NOT_EXIST;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.entity.User;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.mapper.UserMapper;
 import com.ita.domain.service.UserService;
-import org.springframework.stereotype.Service;
-
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.ita.domain.error.ErrorResponseEnum.USER_NOT_EXIST;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -39,6 +41,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User selectById(Integer userId) {
         return Optional.ofNullable(userMapper.selectByPrimaryKey(userId)).orElse(null);
+    }
+
+    @Override
+    public PageInfo<UserInfoDTO> selectByStatus(Integer status, int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        return new PageInfo<>(userMapper.selectAllByStatus(status).stream().map(UserInfoDTO::from).collect(Collectors.toList()));
     }
 
     @Override
