@@ -8,63 +8,62 @@ import com.ita.domain.enums.UserRoleEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Autowired
-  private LoginService loginService;
+    @Autowired
+    private LoginService loginService;
 
-  @Autowired
-  private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
 
-  @GetMapping("login")
-  public ResponseEntity<Map<String, String>> login(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
-    return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.USER.getRole()));
-  }
+    @GetMapping("login")
+    public ResponseEntity<Map<String, String>> login(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+        return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.USER.getRole()));
+    }
 
-  @GetMapping("rider-login")
-  public ResponseEntity<Map<String, String>> riderLogin(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
-    return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.RIDER.getRole()));
-  }
+    @GetMapping("rider-login")
+    public ResponseEntity<Map<String, String>> riderLogin(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+        return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.RIDER.getRole()));
+    }
 
-  @PostMapping("normal-login")
-  public ResponseEntity<UserDTO> normalLogin(@RequestBody UserAccountDTO account, HttpServletResponse response) {
-    return loginService.normalLogin(account.getUsername(), account.getPassword(), response);
-  }
+    @PostMapping("normal-login")
+    public ResponseEntity<UserDTO> normalLogin(@RequestBody UserAccountDTO account, HttpServletResponse response) {
+        return loginService.normalLogin(account.getUsername(), account.getPassword(), response);
+    }
 
-  @GetMapping("/{userId}")
-  public ResponseEntity<UserInfoDTO> getUserInfoById(@PathVariable Integer userId) {
-    return ResponseEntity.ok(UserInfoDTO.from(userService.selectById(userId)));
-  }
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserInfoDTO> getUserInfoById(@PathVariable Integer userId) {
+        return ResponseEntity.ok(UserInfoDTO.from(userService.selectById(userId)));
+    }
 
-  @GetMapping("/status/{status}")
-  public ResponseEntity<PageInfo<UserInfoDTO>> getUserInfoByStatus(@PathVariable Integer status,
-      @RequestParam int page,
-      @RequestParam(required = false, defaultValue = "10") int pageSize) {
-    return ResponseEntity.ok(userService.selectByStatus(status, page, pageSize));
-  }
+    @GetMapping("/status/{status}")
+    public ResponseEntity<PageInfo<UserInfoDTO>> getUserInfoByStatus(@PathVariable Integer status,
+                                                                     @RequestParam int page,
+                                                                     @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(userService.selectByStatus(status, page, pageSize));
+    }
 
-  @PutMapping
-  public ResponseEntity<UserInfoDTO> updateUserStatus(@RequestBody UserInfoDTO user) throws BusinessException {
-    return ResponseEntity.ok(UserInfoDTO.from(userService.updateUserStatus(user)));
-  }
+    @PutMapping
+    public ResponseEntity<UserInfoDTO> updateUserStatus(@RequestBody UserInfoDTO user) throws BusinessException {
+        return ResponseEntity.ok(UserInfoDTO.from(userService.updateUserStatus(user)));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageInfo<UserDTO>> getPageableUser(@RequestParam int page, @RequestParam int pageSize) {
+        return ResponseEntity.ok(userService.selectAll(page, pageSize));
+    }
 }
