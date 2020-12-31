@@ -33,8 +33,8 @@ public class OrderMonitorScheduler {
                 long toMinutes = Duration.between(createTime, LocalDateTime.now()).toMinutes();
                 log.info("createTime is {}, now is {}, toMinutes is {}", createTime, LocalDateTime.now(), toMinutes);
                 if (toMinutes >= 5) {
-//                    order.setStatus(OrderStatusEnum.CANCELED.getCode());
-//                    orderMapper.updateByPrimaryKey(order);
+                    order.setStatus(OrderStatusEnum.CANCELED.getCode());
+                    orderMapper.updateByPrimaryKey(order);
                     log.info("order[orderId = {}] is canceled", order.getId());
                 }
             }
