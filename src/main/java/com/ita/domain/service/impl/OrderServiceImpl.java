@@ -257,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
                 .stream().map(Category::getId).collect(Collectors.toList());
         List<Integer> productIdList = productMapper.selectAllByCategoryIds(categoryIdList)
                 .stream().map(Product::getId).collect(Collectors.toList());
-        PageHelper.startPage(page, pageSize);
+        PageHelper.startPage(page, pageSize, true);
         List<OrderDTO> orders = orderMapper.getOrdersByShop(statusList, productIdList);
         return new PageInfo<>(orders);
     }
