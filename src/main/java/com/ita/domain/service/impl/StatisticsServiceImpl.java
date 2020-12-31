@@ -71,7 +71,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     data.entrySet().stream()
             .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
             .forEachOrdered(s -> sortedMap.put(s.getKey(), s.getValue()));
-    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()), sortedMap);
+    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()).subList(0, 7), sortedMap);
   }
 
   private SaleData generateSaleDataStatistics(Integer shopId, String type) {
