@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     private IdWorker idWorker;
     @Resource
     private CategoryMapper categoryMapper;
-    @Autowired
+    @Resource
     private ShopMapper shopMapper;
     @Autowired
     private MqttMessageServiceImpl mqttMessageService;
@@ -85,18 +85,18 @@ public class OrderServiceImpl implements OrderService {
         return OrderDTO.of(order, ShopDTO.of(shop), BoxDTO.of(box), orderItemDTOs);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = BusinessException.class)
     @Override
     public OrderDTO createOrder(Integer userId, String address, LocalDateTime expectedMealTime) throws BusinessException {
         /*
           1.获取用户购物车信息
-          2.确定柜子号
+          2.确定柜子号 // 加锁
           3.计算订单总价
           4.生成订单号
-          5.创建订单
-          6.更新订单项
-          7.更新商品库存和销量
-          8.清空购物车
+          5.扣减库存  //加锁 8.增加商品销量
+          6.创建订单
+          7.更新订单项
+          9.清空购物车
          */
 
         List<Cart> cartList = cartMapper.selectByUserId(userId);
@@ -104,15 +104,13 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorResponseEnum.CART_IS_EMPTY);
         }
 
-        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
-        if (CollectionUtils.isEmpty(freeBoxList)) {
-            throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
-        }
-        Box box = determineBox(freeBoxList);
+        Box box = determineBox(address);
 
         List<OrderItemDTO> orderItemDTOList = generateOrderItemDTO(cartList);
 
         double orderTotalPrice = getOrderTotalPrice(orderItemDTOList);
+
+        updateStockAndSale(cartList);
 
         Order order = Order.builder()
                 .orderNumber(idWorker.nextId() + "")
@@ -125,8 +123,6 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.insert(order);
 
         saveOrderItem(cartList, order.getOrderNumber());
-
-        updateStockAndSale(orderItemDTOList);
 
         clearCart(cartList);
 
@@ -174,15 +170,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds){
+    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds) {
         return this.orderMapper.selectOrdersByIds(orderIds);
     }
 
-    // todo 后续可以优化逻辑
-    private Box determineBox(List<Box> freeBoxList) {
+    private synchronized Box determineBox(String address) throws BusinessException {
+        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
+        if (CollectionUtils.isEmpty(freeBoxList)) {
+            throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
+        }
         Box box = freeBoxList.get(FIRST);
         box.setStatus(BoxStatusEnum.RESERVED.getCode());
-//        box.setUpdateTime(LocalDateTime.now());
         boxMapper.updateByPrimaryKey(box);
         return box;
     }
@@ -218,12 +216,32 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-    private void updateStockAndSale(List<OrderItemDTO> orderItemDTOList) {
-        orderItemDTOList.forEach(item -> {
-            Product product = ProductDTO.toProduct(item.getProduct());
-            product.setSales(product.getSales() + 1);
-            product.setStock(product.getStock() - 1);
-            productMapper.update(product);
+    private synchronized void updateStockAndSale(List<Cart> cartList) throws BusinessException {
+        // 第一步： 查询
+        List<Integer> productIdList = cartList.stream().map(Cart::getProductId).collect(Collectors.toList());
+
+        // 第二步：判断
+        List<Product> products = productMapper.selectAllByProductIds(productIdList);
+
+        List<Product> needUpdateProducts = new ArrayList<>();
+        for (Product product : products) {
+            Integer stock = product.getStock();
+            Integer quantity = cartList.stream().filter(item -> product.getId().equals(item.getProductId())).collect(Collectors.toList()).get(FIRST).getQuantity();
+            if (quantity > stock) {
+                String errorMessage = String.format("商品[%s]库存不足", product.getName());
+                throw new BusinessException(ErrorResponseEnum.STOCK_NOT_ENOUGH, errorMessage);
+            } else {
+                Product current = new Product();
+                BeanUtils.copyProperties(product, current);
+                current.setStock(stock - quantity);
+                current.setSales(product.getSales() + quantity);
+                needUpdateProducts.add(current);
+            }
+        }
+
+        // 第三步：修改
+        needUpdateProducts.forEach(item -> {
+            productMapper.update(item);
         });
     }
 
@@ -239,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
                 .stream().map(Category::getId).collect(Collectors.toList());
         List<Integer> productIdList = productMapper.selectAllByCategoryIds(categoryIdList)
                 .stream().map(Product::getId).collect(Collectors.toList());
-        PageHelper.startPage(page, pageSize);
+        PageHelper.startPage(page, pageSize, true);
         List<OrderDTO> orders = orderMapper.getOrdersByShop(statusList, productIdList);
         return new PageInfo<>(orders);
     }

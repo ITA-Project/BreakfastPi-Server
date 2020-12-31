@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
-import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.service.ProductService;
 import io.swagger.models.auth.In;
 import org.springframework.http.ResponseEntity;

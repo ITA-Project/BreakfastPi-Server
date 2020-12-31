@@ -32,14 +32,7 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-# for show executed sql
 logging:
-  level:
-    com:
-      ita:
-        domain:
-          mapper:
-            debug
   file: log/logfile.log
 
 mqtt:
