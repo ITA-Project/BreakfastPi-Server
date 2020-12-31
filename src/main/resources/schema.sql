@@ -123,3 +123,13 @@ create table pay_info
     create_time  timestamp null,
     update_time  timestamp null
 );
+
+create table user_search_history
+(
+    id           int auto_increment primary key,
+    user_id      int  not null,
+    shop_id      int  not null,
+    search_key   char(50)  null,
+    create_time  timestamp null,
+    update_time  timestamp null
+);

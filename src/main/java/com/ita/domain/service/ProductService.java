@@ -23,4 +23,6 @@ public interface ProductService {
   PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize);
 
   Boolean updateProductStatus(ProductStatusDTO productStatusDTO);
+
+  List<com.ita.domain.dto.ProductDTO> searchProductByName(String searchKey, Integer shopId, Integer userId);
 }
