@@ -44,7 +44,7 @@ public class OrderMonitorScheduler {
                 LocalDateTime createTime = order.getCreateTime();
                 long toMinutes = Duration.between(createTime, LocalDateTime.now()).toMinutes();
                 log.info("createTime is {}, now is {}, toMinutes is {}", createTime, LocalDateTime.now(), toMinutes);
-                if (toMinutes >= 1) {
+                if (toMinutes >= 5) {
                     rollbackProductAndBoxInfo(order);
                     log.info("order[orderId = {}] is canceled", order.getId());
                 }
