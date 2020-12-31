@@ -4,10 +4,19 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
+import com.ita.domain.entity.Category;
 import com.ita.domain.entity.Product;
+import com.ita.domain.entity.Shop;
+import com.ita.domain.entity.UserSearchHistory;
+import com.ita.domain.mapper.CategoryMapper;
 import com.ita.domain.mapper.ProductMapper;
+import com.ita.domain.mapper.ShopMapper;
+import com.ita.domain.mapper.UserSearchHistoryMapper;
 import com.ita.domain.service.ProductService;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +28,15 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService{
 
     private ProductMapper productMapper;
+
+    @Autowired
+    private ShopMapper shopMapper;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
+
+    @Autowired
+    private UserSearchHistoryMapper userSearchHistoryMapper;
 
     @Autowired
     public void setProductMapper(ProductMapper productMapper) {
@@ -72,5 +90,43 @@ public class ProductServiceImpl implements ProductService{
         Product.from(product, productStatusDTO);
         int updateResult = productMapper.update(product);
         return updateResult > 0;
+    }
+
+    @Override
+    public List<com.ita.domain.dto.ProductDTO> searchProductByName(String searchKey, Integer shopId, Integer userId) {
+        List<Category> categories = categoryMapper.selectAllByShopId(shopId);
+        List<Integer> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
+        List<String> wordList = this.generateWordList(searchKey);
+        List<Product> products = this.productMapper.selectAllByCategoryIdsAndSearchKeyList(categoryIds, wordList);
+        UserSearchHistory userSearchHistory = UserSearchHistory
+            .builder()
+            .userId(userId)
+            .shopId(shopId)
+            .searchKey(searchKey)
+            .build();
+        userSearchHistoryMapper.insert(userSearchHistory);
+        return products.stream().map(product -> com.ita.domain.dto.ProductDTO.of(product)).collect(Collectors.toList());
+    }
+
+    private List<String> generateWordList(String searchKey) {
+        String chineseRegEx = "[\\u4e00-\\u9fa5]";
+        String charRegex = "[a-zA-Z]";
+        String numberRegex = "[0-9]";
+        List<String> keyList = new ArrayList<>();
+        matchResult(Pattern.compile(chineseRegEx),searchKey, keyList);
+        matchResult(Pattern.compile(charRegex),searchKey, keyList);
+        matchResult(Pattern.compile(numberRegex),searchKey, keyList);
+        return keyList;
+    }
+
+    private void matchResult(Pattern p, String str, List<String> keyList)
+    {
+        Matcher m = p.matcher(str);
+        while (m.find()) {
+            for (int i = 0; i <= m.groupCount(); i++)
+            {
+                keyList.add(m.group());
+            }
+        }
     }
 }

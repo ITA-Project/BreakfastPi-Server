@@ -166,4 +166,41 @@
         from product
         where category_id = #{categoryId,jdbcType=INTEGER}
     </delete>
+
+    <select id="selectAllByCategoryIdsAndSearchKeyList" resultMap="BaseResultMap">
+      select id,
+      name,
+      description,
+      image_url,
+      price,
+      stock,
+      sales,
+      status,
+      status_message,
+      category_id,
+      create_time,
+      update_time
+      from product
+      <where>
+        <if test="categoryIds == null or categoryIds.size() == 0">
+          1 = 2
+        </if>
+        <if test="categoryIds != null and categoryIds.size() > 0">
+          category_id in
+          <foreach collection="categoryIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+          </foreach>
+        </if>
+        and (
+        <if test="searchKeyList == null or searchKeyList.size() == 0">
+          1 = 2
+        </if>
+        <if test="searchKeyList != null and searchKeyList.size() > 0">
+          <foreach collection="searchKeyList" item="item" index="index" separator="and">
+            name LIKE CONCAT('%',#{item},'%')
+          </foreach>
+        </if>
+        )
+      </where>
+    </select>
 </mapper>
