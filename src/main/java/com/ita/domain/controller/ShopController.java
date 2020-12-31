@@ -3,6 +3,7 @@ package com.ita.domain.controller;
 import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.entity.Shop;
 import com.ita.domain.service.ShopService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class ShopController {
     }
 
     @PutMapping
-    public int update(@RequestBody Shop shop) {
-        return shopService.update(shop);
+    public ResponseEntity<Shop> update(@RequestBody Shop shop) {
+        return ResponseEntity.ok(shopService.update(shop));
     }
 }

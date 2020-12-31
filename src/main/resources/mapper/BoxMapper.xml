@@ -28,6 +28,12 @@
         update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="updateStatusById">
+    update box
+    set status      = #{status,jdbcType=TINYINT},
+        update_time = now()
+    where id = #{id,jdbcType=INTEGER}
+  </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, address, number, status, create_time, update_time
     from box
