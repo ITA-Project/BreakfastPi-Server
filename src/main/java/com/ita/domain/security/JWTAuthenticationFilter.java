@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.ita.domain.constant.HttpParameterConstant;
 import com.ita.domain.entity.User;
+import com.ita.domain.error.BusinessException;
+import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.utils.JWTTokenUtils;
 import com.ita.utils.UsernamePasswordAuthenticationTokenUtils;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +48,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
       return null;
     }
     String keyId = JWT.decode(tokenString).getKeyId();
-    String redisTokenStr = (String)redisTemplate.opsForValue().get(keyId);
+    String redisTokenStr = null;
+    try {
+      redisTokenStr = (String)redisTemplate.opsForValue().get(keyId);
+    } catch (RedisConnectionFailureException e) {
+      throw new RedisConnectionFailureException("Redis Connect Fail");
+    }
     if(Objects.isNull(redisTokenStr)) {
       return null;
     }
