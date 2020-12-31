@@ -269,16 +269,35 @@
     </select>
     <select id="selectSaleByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
             resultMap="OrderSaleMap">
-       select date_format(o.completed_time, #{formatType}) type , count(*) sale_count, sum(o.amount) sale_amount
+        select
+        <if test="formatType == '%w'">
+            ( (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1 ) type,
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w') type,
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m') type,
+        </if>
+        count(*) sale_count, sum(o.amount) sale_amount
         from `order` o
         left join order_item oi on o.order_number = oi.order_number
         left join product p on oi.product_id = p.id
         left join category c on c.id = p.category_id
         where o.status = 5 and
-         c.shop_id = #{shopId} and
-         o.completed_time &gt;= #{startTime} and
-         o.completed_time &lt;= #{endTime}
-         group by date_format(o.completed_time, #{formatType});
+        c.shop_id = #{shopId} and
+        o.completed_time &gt;= #{startTime} and
+        o.completed_time &lt;= #{endTime}
+        group by
+        <if test="formatType == '%w'">
+            (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1;
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w');
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m');
+        </if>
     </select>
     <select id="selectOrderByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
             resultMap="BaseResultMap">
@@ -293,23 +312,43 @@
          o.completed_time &lt;= #{endTime};
     </select>
     <select id="selectUserByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
-      resultMap="OrderUserMap">
-      select type, count(user_id) as user_count
-      FROM (select DISTINCT date_format(o.completed_time, #{formatType}) type , u.id user_id
-             FROM user u
-                    LEFT JOIN `order` o
-                              ON u.id = o.user_id
-                    LEFT JOIN order_item oi
-                              ON o.order_number = oi.order_number
-                    LEFT JOIN product p
-                              ON oi.product_id = p.id
-                    LEFT JOIN category c
-                              ON c.id = p.category_id
-      where o.status = 5 and
+            resultMap="OrderUserMap">
+        select type, count(user_id) as user_count
+        FROM (select DISTINCT
+        <if test="formatType == '%w'">
+            ( (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1 ) type,
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w') type,
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m') type,
+        </if>
+        u.id user_id
+        FROM user u
+        LEFT JOIN `order` o
+        ON u.id = o.user_id
+        LEFT JOIN order_item oi
+        ON o.order_number = oi.order_number
+        LEFT JOIN product p
+        ON oi.product_id = p.id
+        LEFT JOIN category c
+        ON c.id = p.category_id
+        where o.status = 5 and
         c.shop_id = #{shopId} and
         o.completed_time &gt;= #{startTime} and
         o.completed_time &lt;= #{endTime}
-      group by date_format(o.completed_time, #{formatType})) as temp group by user_id;
+        group by
+        <if test="formatType == '%w'">
+            (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w')
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m')
+        </if>
+        ) as temp group by user_id;
     </select>
     <select id="selectRecentOrderByUserId"  resultMap="OrderMap">
       select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
