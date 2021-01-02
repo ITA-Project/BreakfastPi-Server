@@ -8,6 +8,7 @@ import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -91,6 +93,7 @@ public class OrderController {
 
     @GetMapping("test")
     public String test() {
+        log.info("api test ~~");
         return "ok";
     }
 }
