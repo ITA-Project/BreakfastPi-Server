@@ -24,17 +24,23 @@ public interface OrderMapper {
 
     int updateStatusByOrderNumber(String orderNumber, Integer status);
 
-    List<OrderDTO> getOrdersByUser(Integer userId, List<Integer> statusList);
+    List<Order> getOrdersByUser(Integer userId, List<Integer> statusList, Integer start, Integer pageSize);
+
+    int countUserOrders(Integer userId, List<Integer> statusList);
+
+    int countOrdersByStatus(@Param("statusList") List<Integer> statusList);
+
+    List<String> getShopOrderNumber(Integer shopId, List<Integer> statusList);
 
     OrderDTO getOrderDetail(String orderNumber);
 
-    List<OrderDTO> selectOrdersByStatus(@Param("statusList") List<Integer> statusList);
+    List<Order> selectOrdersByStatus(@Param("statusList") List<Integer> statusList, Integer start, Integer pageSize);
 
     int updateStatusByPrimaryKey(List<Integer> orderIds, Integer status, Integer prevStatus);
 
     List<OrderDTO> selectOrdersByIds(@Param("orderIds") List<Integer> orderIds);
 
-    List<OrderDTO> getOrdersByShop(List<Integer> statusList, List<Integer> productIdList);
+    List<Order> getOrdersByShop(List<String> orderNumberList, Integer start, Integer pageSize);
 
     Long selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery orderQuery);
 

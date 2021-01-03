@@ -1,8 +1,7 @@
 package com.ita.domain.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.*;
+import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
@@ -46,10 +45,21 @@ public class OrderServiceImpl implements OrderService {
     private MqttMessageServiceImpl mqttMessageService;
 
     @Override
-    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
-        PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList);
-        return new PageInfo<>(orders);
+    public PageResult getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
+        int total = orderMapper.countUserOrders(userId, statusList);
+        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList, (page - 1) * pageSize, pageSize).stream().map(n -> {
+            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
+                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
+                return OrderItemDTO.of(o, productDTO);
+            }).collect(Collectors.toList());
+            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
+            return OrderDTO.of(n, boxDTO, orderItemDTOList);
+        }).collect(Collectors.toList());
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
     }
 
     @Override
@@ -130,10 +140,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<OrderDTO> getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByStatus(statusList);
-        return new PageInfo<>(orderDTOS);
+    public PageResult getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
+        int total = orderMapper.countOrdersByStatus(statusList);
+        List<OrderDTO> orders = orderMapper.selectOrdersByStatus(statusList, (page - 1) * pageSize, pageSize).stream().map(n -> {
+            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
+                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
+                return OrderItemDTO.of(o, productDTO);
+            }).collect(Collectors.toList());
+            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
+            return OrderDTO.of(n, boxDTO, orderItemDTOList);
+        }).collect(Collectors.toList());
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
     }
 
     @Override
@@ -252,14 +273,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<OrderDTO> getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
-        List<Integer> categoryIdList = categoryMapper.selectAllByShopId(shopId)
-                .stream().map(Category::getId).collect(Collectors.toList());
-        List<Integer> productIdList = productMapper.selectAllByCategoryIds(categoryIdList)
-                .stream().map(Product::getId).collect(Collectors.toList());
-        PageHelper.startPage(page, pageSize, true);
-        List<OrderDTO> orders = orderMapper.getOrdersByShop(statusList, productIdList);
-        return new PageInfo<>(orders, pageSize);
+    public PageResult getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
+        List<String> shopOrderNumbers = orderMapper.getShopOrderNumber(shopId, statusList);
+        int total = shopOrderNumbers.size();
+        List<OrderDTO> orders = orderMapper.getOrdersByShop(shopOrderNumbers, (page - 1) * pageSize, pageSize).stream().map(n -> {
+            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
+                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
+                return OrderItemDTO.of(o, productDTO);
+            }).collect(Collectors.toList());
+            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
+            return OrderDTO.of(n, boxDTO, orderItemDTOList);
+        }).collect(Collectors.toList());
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
     }
 
     @Override
