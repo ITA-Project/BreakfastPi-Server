@@ -47,14 +47,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
         int total = orderMapper.countUserOrders(userId, statusList);
-        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList, (page - 1) * pageSize, pageSize).stream().map(n -> {
-            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
-                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
-                return OrderItemDTO.of(o, productDTO);
-            }).collect(Collectors.toList());
-            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
-            return OrderDTO.of(n, boxDTO, orderItemDTOList);
-        }).collect(Collectors.toList());
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.getOrdersByUser(userId, statusList, (page - 1) * pageSize, pageSize));
         int totalPage = total / pageSize;
         if (total < pageSize && total != 0) {
             totalPage = 1;
@@ -142,14 +135,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
         int total = orderMapper.countOrdersByStatus(statusList);
-        List<OrderDTO> orders = orderMapper.selectOrdersByStatus(statusList, (page - 1) * pageSize, pageSize).stream().map(n -> {
-            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
-                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
-                return OrderItemDTO.of(o, productDTO);
-            }).collect(Collectors.toList());
-            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
-            return OrderDTO.of(n, boxDTO, orderItemDTOList);
-        }).collect(Collectors.toList());
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.selectOrdersByStatus(statusList, (page - 1) * pageSize, pageSize));
         int totalPage = total / pageSize;
         if (total < pageSize && total != 0) {
             totalPage = 1;
@@ -276,19 +262,26 @@ public class OrderServiceImpl implements OrderService {
     public PageResult getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
         List<String> shopOrderNumbers = orderMapper.getShopOrderNumber(shopId, statusList);
         int total = shopOrderNumbers.size();
-        List<OrderDTO> orders = orderMapper.getOrdersByShop(shopOrderNumbers, (page - 1) * pageSize, pageSize).stream().map(n -> {
-            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
-                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
-                return OrderItemDTO.of(o, productDTO);
-            }).collect(Collectors.toList());
-            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
-            return OrderDTO.of(n, boxDTO, orderItemDTOList);
-        }).collect(Collectors.toList());
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.getOrdersByShop(shopOrderNumbers, (page - 1) * pageSize, pageSize));
         int totalPage = total / pageSize;
         if (total < pageSize && total != 0) {
             totalPage = 1;
         }
         return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
+    }
+
+    private List<OrderDTO> convertOrderDTO(List<Order> orderList) {
+        return orderList.stream().map(n -> {
+            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
+                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
+                return OrderItemDTO.of(o, productDTO);
+            }).collect(Collectors.toList());
+            BoxDTO boxDTO = new BoxDTO();
+            if (Objects.nonNull(n.getBoxId())) {
+                boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
+            }
+            return OrderDTO.of(n, boxDTO, orderItemDTOList);
+        }).collect(Collectors.toList());
     }
 
     @Override
