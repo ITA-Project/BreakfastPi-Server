@@ -24,7 +24,7 @@ public interface OrderMapper {
 
     int updateStatusByOrderNumber(String orderNumber, Integer status);
 
-    List<OrderDTO> getOrdersByUser(Integer userId, List<Integer> statusList);
+    List<Order> getOrdersByUser(Integer userId, List<Integer> statusList);
 
     OrderDTO getOrderDetail(String orderNumber);
 

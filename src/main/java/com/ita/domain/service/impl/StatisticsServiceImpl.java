@@ -69,9 +69,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     Map<Integer, Long> sortedMap = new HashMap<>();
     data.entrySet().stream()
-            .sorted(Map.Entry.comparingByValue())
+            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
             .forEachOrdered(s -> sortedMap.put(s.getKey(), s.getValue()));
-    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()).subList(0, 7), new ArrayList<>(sortedMap.values()).subList(0, 7));
+    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()), new ArrayList<>(sortedMap.values()));
   }
 
   private SaleData generateSaleDataStatistics(Integer shopId, String type) {
