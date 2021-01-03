@@ -48,14 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
         PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList).stream().map(n -> {
-            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
-                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
-                return OrderItemDTO.of(o, productDTO);
-            }).collect(Collectors.toList());
-            BoxDTO boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
-            return OrderDTO.of(n, boxDTO, orderItemDTOList);
-        }).collect(Collectors.toList());
+        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList);
         return new PageInfo<>(orders);
     }
 
