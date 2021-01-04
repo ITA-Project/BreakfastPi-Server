@@ -1,13 +1,12 @@
 package com.ita.domain.controller;
 
-import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.OrderDTO;
 import com.ita.domain.dto.ProductDTO;
+import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.Order;
-import com.ita.domain.enums.BoxStatusEnum;
-import com.ita.domain.enums.OrderStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<PageInfo<OrderDTO>> getUserOrders(@PathVariable Integer userId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
+    public ResponseEntity<PageResult> getUserOrders(@PathVariable Integer userId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
         return ResponseEntity.ok(orderService.getUserOrders(userId, page, pageSize, status));
     }
 
@@ -55,7 +55,7 @@ public class OrderController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<PageInfo<OrderDTO>> getOrdersByStatus(@RequestParam List<Integer> status, @RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<PageResult> getOrdersByStatus(@RequestParam List<Integer> status, @RequestParam int page, @RequestParam int pageSize) {
         return ResponseEntity.ok(orderService.getOrdersByStatus(status, page, pageSize));
     }
 
@@ -70,7 +70,7 @@ public class OrderController {
     }
 
     @GetMapping("/shops/{shopId}")
-    public ResponseEntity<PageInfo<OrderDTO>> getShopOrders(@PathVariable Integer shopId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
+    public ResponseEntity<PageResult> getShopOrders(@PathVariable Integer shopId, @RequestParam int page, @RequestParam int pageSize, @RequestParam List<Integer> status) {
         return ResponseEntity.ok(orderService.getShopOrders(shopId, page, pageSize, status));
     }
 
@@ -91,6 +91,7 @@ public class OrderController {
 
     @GetMapping("test")
     public String test() {
+        log.info("api test ~~");
         return "ok";
     }
 }
