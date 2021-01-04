@@ -27,6 +27,7 @@ public enum ErrorResponseEnum implements ErrorResponse {
     ACCESS_NOT_LOGIN(40001, "认证失败"),
     ACCESS_DENY(40002, "权限不足"),
     ACCESS_LOGIN_FAIL(40003, "登录失败"),
+    WX_GET_ACCESS_TOKEN_FAIL(40005, "获取微信小程序Access Token失败"),
     REDIS_CONNECT_FAIL(50000, "Redis连接失败");
 
     private final int errCode;

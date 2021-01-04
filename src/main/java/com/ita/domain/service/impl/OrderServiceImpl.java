@@ -1,15 +1,19 @@
 package com.ita.domain.service.impl;
 
+import com.ita.domain.config.RiderMiniProgramerConfig;
+import com.ita.domain.config.UserMiniProgramerConfig;
 import com.ita.domain.dto.*;
 import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
+import com.ita.domain.enums.UserRoleEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.mapper.*;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
+import com.ita.utils.WXServiceUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,11 @@ import static com.ita.common.constant.Constant.FIRST;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    public static final String APP_ID = "appId";
+    public static final String APP_SECRET = "appSecret";
+    public static final String SUBSCRIBE_MSG_TEMPLATE_ID = "subscribeMsgTemplateId";
+    public static final String MINIPROGRAM_STATE = "miniprogram_state";
     @Resource
     private OrderMapper orderMapper;
     @Resource
@@ -43,6 +52,13 @@ public class OrderServiceImpl implements OrderService {
     private ShopMapper shopMapper;
     @Autowired
     private MqttMessageServiceImpl mqttMessageService;
+    @Autowired
+    private UserMiniProgramerConfig userMiniProgramerConfig;
+    @Autowired
+    private RiderMiniProgramerConfig riderMiniProgramerConfig;
+    @Autowired
+    private UserMapper userMapper;
+
 
     @Override
     public PageResult getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
@@ -144,19 +160,48 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateStatusToDeliveredByOrders(List<Integer> orderIds){
-        orderIds.stream().forEach(orderId -> {
-            Order order = this.orderMapper.selectByPrimaryKey(orderId);
-            if(order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
-                order.setStatus(OrderStatusEnum.DELIVERED.getCode());
-                order.setDeliverTime(LocalDateTime.now());
-                this.orderMapper.updateByPrimaryKey(order);
-            }
-            Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
-            box.setStatus(BoxStatusEnum.LOADED.getCode());
-            this.boxMapper.updateByPrimaryKey(box);
-        });
-        return true;
+    public boolean updateStatusToDeliveredByOrders(List<Integer> orderIds) throws Exception {
+      for (Integer orderId : orderIds) {
+        Order order = this.orderMapper.selectByPrimaryKey(orderId);
+        if(order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
+          order.setStatus(OrderStatusEnum.DELIVERED.getCode());
+          order.setDeliverTime(LocalDateTime.now());
+          this.orderMapper.updateByPrimaryKey(order);
+        }
+        Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
+        box.setStatus(BoxStatusEnum.LOADED.getCode());
+        this.boxMapper.updateByPrimaryKey(box);
+        User user = this.userMapper.selectByPrimaryKey(order.getUserId());
+        this.sendSubscribeMessage(user, order, box);
+      }
+      return true;
+    }
+
+    public void sendSubscribeMessage(User user, Order order, Box box) throws Exception {
+        Map<String, String> wxAppInfo = this.getWXAppInfo(user.getRole());
+        String accessToken = WXServiceUtil.getWXMiniProgramAccessToken(wxAppInfo.get(APP_ID), wxAppInfo.get(APP_SECRET));
+        Map<String, String> data = new HashMap<>();
+        data.put("thing4", "早餐已送达");
+        data.put("thing8", box.getAddress() + "-" + box.getNumber());
+        data.put("character_string5", order.getOrderNumber());
+        data.put("date2", order.getCreateTime().toString());
+        String pageURL = "/pages/order-detail/order-detail?orderNumber=";
+        pageURL += order.getOrderNumber();
+        WXServiceUtil.sendWXMiniProgramSubscribeMsg(accessToken, user.getOpenid(), data, wxAppInfo.get(SUBSCRIBE_MSG_TEMPLATE_ID), pageURL, wxAppInfo.get(MINIPROGRAM_STATE));
+    }
+
+    private Map<String, String> getWXAppInfo(String role) {
+        Map<String, String> wxAppInfo = new HashMap<>();
+        if(role.equals(UserRoleEnum.USER.getRole())) {
+            wxAppInfo.put(APP_ID, userMiniProgramerConfig.getAppId());
+            wxAppInfo.put(APP_SECRET, userMiniProgramerConfig.getAppSecret());
+            wxAppInfo.put(SUBSCRIBE_MSG_TEMPLATE_ID, userMiniProgramerConfig.getSubscribeMsgTemplateId());
+            wxAppInfo.put(MINIPROGRAM_STATE, userMiniProgramerConfig.getMiniprogramState());
+        } else if(role.equals(UserRoleEnum.RIDER.getRole())) {
+            wxAppInfo.put(APP_ID, riderMiniProgramerConfig.getAppId());
+            wxAppInfo.put(APP_SECRET, riderMiniProgramerConfig.getAppSecret());
+        }
+        return wxAppInfo;
     }
 
     @Override
