@@ -2,9 +2,9 @@ package com.ita.domain.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.ShopDTO;
-import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
+
 import java.util.List;
 
 public interface ProductService {
@@ -21,7 +21,7 @@ public interface ProductService {
 
   PageInfo<Product> getRecommendProducts(int page, int pageSize);
 
-  PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize);
+  PageInfo<Product> getProductByStatus(Integer productStatus, int page, int pageSize);
 
   Boolean updateProductStatus(ProductStatusDTO productStatusDTO);
 

@@ -2,11 +2,9 @@ package com.ita.domain.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.ShopDTO;
-import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
 import com.ita.domain.service.ProductService;
-import io.swagger.models.auth.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,9 +51,9 @@ public class ProductController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<PageInfo<ProductDTO>> getProductByStatus(@PathVariable Integer status,
-        @RequestParam int page,
-        @RequestParam(required = false, defaultValue = "10") int pageSize) {
+    public ResponseEntity<PageInfo<Product>> getProductByStatus(@PathVariable Integer status,
+                                                                @RequestParam int page,
+                                                                @RequestParam(required = false, defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(productService.getProductByStatus(status, page, pageSize));
     }
 
