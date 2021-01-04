@@ -50,6 +50,7 @@ public class ShopServiceImpl implements ShopService {
 
     private void filterValidProductsAndCategories(ShopDTO shopDTO) {
         List<CategoryDTO> validCategories = shopDTO.getCategories().stream()
+                .filter(category -> !CollectionUtils.isEmpty(category.getProducts()))
                 .peek(category -> {
                     List<ProductDTO> validProducts = category.getProducts().stream()
                             .filter(product -> product.getStock() > 0 && ProductStatusEnum.PASS.getCode().equals(product.getStatus()))
