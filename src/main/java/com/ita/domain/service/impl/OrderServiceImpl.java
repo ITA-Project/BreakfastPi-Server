@@ -276,10 +276,8 @@ public class OrderServiceImpl implements OrderService {
                 ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
                 return OrderItemDTO.of(o, productDTO);
             }).collect(Collectors.toList());
-            BoxDTO boxDTO = new BoxDTO();
-            if (Objects.nonNull(n.getBoxId())) {
-                boxDTO = BoxDTO.of(boxMapper.selectByPrimaryKey(n.getBoxId()));
-            }
+            Box box = boxMapper.selectByPrimaryKey(n.getBoxId());
+            BoxDTO boxDTO = Objects.nonNull(box) ? BoxDTO.of(box) : new BoxDTO();
             return OrderDTO.of(n, boxDTO, orderItemDTOList);
         }).collect(Collectors.toList());
     }
