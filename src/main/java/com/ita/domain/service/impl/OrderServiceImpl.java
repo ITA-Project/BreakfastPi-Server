@@ -273,7 +273,8 @@ public class OrderServiceImpl implements OrderService {
     private List<OrderDTO> convertOrderDTO(List<Order> orderList) {
         return orderList.stream().map(n -> {
             List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
-                ProductDTO productDTO = ProductDTO.of(productMapper.selectByPrimaryKey(o.getProductId()));
+                Product product = productMapper.selectByPrimaryKey(o.getProductId());
+                ProductDTO productDTO = Objects.nonNull(product) ? ProductDTO.of(product) : new ProductDTO();
                 return OrderItemDTO.of(o, productDTO);
             }).collect(Collectors.toList());
             Box box = boxMapper.selectByPrimaryKey(n.getBoxId());
