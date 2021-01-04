@@ -1,9 +1,12 @@
 package com.ita.domain.service.impl;
 
+import com.ita.domain.dto.CategoryDTO;
+import com.ita.domain.dto.ProductDTO;
 import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.entity.Category;
 import com.ita.domain.entity.Product;
 import com.ita.domain.entity.Shop;
+import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.mapper.CategoryMapper;
 import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.mapper.ShopMapper;
@@ -11,6 +14,7 @@ import com.ita.domain.service.ShopService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +34,31 @@ public class ShopServiceImpl implements ShopService {
         this.productMapper = productMapper;
         this.categoryMapper = categoryMapper;
         this.shopMapper = shopMapper;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ShopDTO assembleValidShopDTOByShopId(Integer shopId) {
+        Shop shop = shopMapper.selectByPrimaryKey(shopId);
+        List<Category> categories = categoryMapper.selectAllByShopId(shopId);
+        List<Integer> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
+        List<Product> products = productMapper.selectAllByCategoryIds(categoryIds);
+        ShopDTO shopDTO = ShopDTO.of(shop, categories, products);
+        filterValidProductsAndCategories(shopDTO);
+        return shopDTO;
+    }
+
+    private void filterValidProductsAndCategories(ShopDTO shopDTO) {
+        List<CategoryDTO> validCategories = shopDTO.getCategories().stream()
+                .peek(category -> {
+                    List<ProductDTO> validProducts = category.getProducts().stream()
+                            .filter(product -> product.getStock() > 0 && ProductStatusEnum.PASS.getCode().equals(product.getStatus()))
+                            .collect(Collectors.toList());
+                    category.setProducts(validProducts);
+                })
+                .filter(category -> !CollectionUtils.isEmpty(category.getProducts()))
+                .collect(Collectors.toList());
+        shopDTO.setCategories(validCategories);
     }
 
     @Transactional(readOnly = true)
