@@ -52,9 +52,9 @@ public class UserController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<PageInfo<UserInfoDTO>> getUserInfoByStatus(@PathVariable Integer status,
-                                                                     @RequestParam int page,
-                                                                     @RequestParam(required = false, defaultValue = "10") int pageSize) {
+    public ResponseEntity<PageInfo<User>> getUserInfoByStatus(@PathVariable Integer status,
+                                                              @RequestParam int page,
+                                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.selectByStatus(status, page, pageSize));
     }
 

@@ -19,6 +19,11 @@ public class ShopController {
     }
 
     @GetMapping("/details/{id}")
+    public ShopDTO getValidShopDetailsByShopId(@PathVariable Integer id) {
+        return shopService.assembleValidShopDTOByShopId(id);
+    }
+
+    @GetMapping("/all-details/{id}")
     public ShopDTO getShopDetailsByShopId(@PathVariable Integer id) {
         return shopService.assembleShopDTOByShopId(id);
     }
