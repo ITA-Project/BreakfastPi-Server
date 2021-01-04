@@ -61,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Map<String, String> login(String code, String role) throws Exception {
+    public Map<String, Object> login(String code, String role) throws Exception {
         String openId = this.getOpenId(code, role);
         User dbExistedUser = userServiceImpl.selectByOpenId(openId);
         User user;
@@ -89,9 +89,9 @@ public class LoginServiceImpl implements LoginService {
                 throw new BusinessException(ErrorResponseEnum.REDIS_CONNECT_FAIL);
             }
         }
-        Map<String, String> userInfo = new HashMap<>();
+        Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("token", token);
-        userInfo.put("userId", user.getId().toString());
+        userInfo.put("userId", user.getId());
         return userInfo;
     }
 

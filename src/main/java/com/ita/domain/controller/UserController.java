@@ -31,12 +31,12 @@ public class UserController {
 
 
     @GetMapping("login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Map<String, Object>> login(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.USER.getRole()));
     }
 
     @GetMapping("rider-login")
-    public ResponseEntity<Map<String, String>> riderLogin(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Map<String, Object>> riderLogin(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         return ResponseEntity.ok().body(loginService.login(code, UserRoleEnum.RIDER.getRole()));
     }
 

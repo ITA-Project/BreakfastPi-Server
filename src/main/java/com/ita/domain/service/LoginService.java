@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface LoginService {
 
-    Map<String, String> login(String code, String role) throws Exception;
+    Map<String, Object> login(String code, String role) throws Exception;
 
     ResponseEntity<UserDTO> normalLogin(String username, String password, HttpServletResponse response);
 
