@@ -1,11 +1,12 @@
 package com.ita.domain.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
-import com.ita.domain.enums.ProductStatusEnum;
 import com.ita.domain.service.ProductService;
+import io.swagger.models.auth.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,5 +62,11 @@ public class ProductController {
     @PutMapping("/status")
     public ResponseEntity<Boolean> updateProductStatus(@RequestBody ProductStatusDTO productStatusDTO) {
         return ResponseEntity.ok(productService.updateProductStatus(productStatusDTO));
+    }
+
+    @GetMapping("/search")
+    public ShopDTO searchByName(@RequestParam String name, @RequestParam Integer shopId,
+        @RequestParam Integer userId) {
+        return this.productService.searchProductByName(name, shopId, userId);
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ita.domain.mapper.UserSearchHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.ita.domain.entity.UserSearchHistory">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="shop_id" jdbcType="INTEGER" property="shopId" />
+    <result column="search_key" jdbcType="VARCHAR" property="searchKey" />
+  </resultMap>
+  <resultMap id="SearchHistoryDTOMap" type="com.ita.domain.dto.SearchHistoryDTO">
+    <result column="shop_id" jdbcType="INTEGER" property="shopId" />
+    <result column="search_key" jdbcType="VARCHAR" property="searchKey" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ita.domain.entity.UserSearchHistory">
+    insert into user_search_history (id, user_id, shop_id,
+      search_key, create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER},
+      #{searchKey,jdbcType=CHAR}, now(), now())
+  </insert>
+  <select id="selectUserSearchHistoryByUserId" parameterType="java.lang.Integer" resultMap="SearchHistoryDTOMap">
+        select distinct shop_id,
+               search_key
+        from user_search_history
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by create_time desc limit 15
+    </select>
+</mapper>

@@ -9,6 +9,7 @@ import java.util.Date;
 public class JWTTokenUtils {
 
     public final static String AUTHORIZATION = "Authorization";
+    public final static String BEARER = "Bearer";
     private final static String secret = "BA125SDSR62WQEQ23126";
 
     public static String getUserToken(User user) {

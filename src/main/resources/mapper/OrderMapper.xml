@@ -174,66 +174,82 @@
         from `order` o
         where o.status = #{status,jdbcType=INTEGER}
     </select>
-    <select id="getOrdersByUser"  resultMap="OrderMap">
+    <select id="getOrdersByUser" resultMap="BaseResultMap">
         select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
         o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
-        o.update_time, o.estimated_time, o.status,
-        b.id as bid, b.address, b.number,
-        oi.id as oi_id, oi.quantity,
-        p.id as pid, p.name, p.description, p.image_url, p.price
-        from `order` o inner join box b on o.box_id = b.id
-        inner join order_item oi on o.order_number = oi.order_number
-        inner join product p on p.id = oi.product_id
+        o.update_time, o.estimated_time, o.status, o.box_id
+        from `order` o
         where o.user_id = #{userId,jdbcType=INTEGER} and o.status in
+        <foreach collection="statusList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by o.create_time desc
+        limit #{start,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="countUserOrders" resultType="Integer">
+        select count(*) from `order` o
+        where o.user_id = #{userId,jdbcType=INTEGER} and o.status in
+        <foreach collection="statusList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="countOrdersByStatus" resultType="Integer">
+        select count(*) from `order` o
+        where o.status in
+        <foreach collection="statusList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getShopOrderNumber" resultType="java.lang.String">
+        select distinct o.order_number
+        from `order` o
+        left join order_item oi on o.order_number = oi.order_number
+        left join product p on p.id = oi.product_id
+        left join category c on c.id = p.category_id
+        where c.shop_id = #{shopId,jdbcType=INTEGER} and o.status in
         <foreach collection="statusList" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
         order by o.create_time desc
     </select>
 
-    <select id="getOrdersByShop" resultMap="OrderMap">
+    <select id="getOrdersByShop" resultMap="BaseResultMap">
         select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
         o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
-        o.update_time, o.estimated_time, o.status,
-        oi.id as bid, oi.id as oi_id, oi.quantity,
-        p.id as pid, p.name, p.description, p.image_url, p.price
+        o.update_time, o.estimated_time, o.status, o.box_id
         from `order` o
-        inner join order_item oi on o.order_number = oi.order_number
-        inner join product p on p.id = oi.product_id
-        where o.status in
-        <foreach collection="statusList" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        <if test="productIdList == null or productIdList.size() == 0">
-            and 1 = 2
+        where
+        <if test="orderNumberList == null or orderNumberList.size() == 0">
+            1 = 2
         </if>
-        <if test="productIdList != null and productIdList.size() > 0">
-            and oi.product_id in
-            <foreach collection="productIdList" item="id" index="index" open="(" close=")" separator=",">
+        <if test="orderNumberList != null and orderNumberList.size() > 0">
+            o.order_number in
+            <foreach collection="orderNumberList" item="id" index="index" open="(" close=")" separator=",">
                 #{id}
             </foreach>
         </if>
         order by o.create_time desc
+        limit #{start,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
     </select>
-    <select id="selectOrdersByStatus"  resultMap="OrderMap">
-        select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time,
-              o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
-              o.update_time, o.estimated_time, o.status,
-              b.id as bid, b.address, b.number,
-              oi.id as oi_id, oi.quantity,
-              p.id as pid, p.name, p.description, p.image_url, p.price
-        from `order` o inner join box b on o.box_id = b.id
-        inner join order_item oi on o.order_number = oi.order_number
-        inner join product p on p.id = oi.product_id
+
+    <select id="selectOrdersByStatus" resultMap="BaseResultMap">
+        select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,
+        o.completed_time, o.cancel_time, o.amount, o.user_id, o.create_time,
+        o.update_time, o.estimated_time, o.status, o.box_id
+        from `order` o
         where o.status in
         <foreach collection="statusList" item="item" open="(" separator="," close=")">
-          #{item}
+            #{item}
         </foreach>
         order by o.create_time desc
+        limit #{start,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
     </select>
     <update id="updateStatusByPrimaryKey">
-          update `order`
-          set status = #{status,jdbcType=INTEGER}
+        update `order`
+        set status = #{status,jdbcType=INTEGER}
           where status = #{prevStatus,jdbcType=INTEGER} and id in
           <foreach collection="orderIds" item="item" open="(" separator="," close=")">
             #{item}
@@ -269,16 +285,35 @@
     </select>
     <select id="selectSaleByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
             resultMap="OrderSaleMap">
-       select date_format(o.completed_time, #{formatType}) type , count(*) sale_count, sum(o.amount) sale_amount
+        select
+        <if test="formatType == '%w'">
+            ( (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1 ) type,
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w') type,
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m') type,
+        </if>
+        count(*) sale_count, sum(o.amount) sale_amount
         from `order` o
         left join order_item oi on o.order_number = oi.order_number
         left join product p on oi.product_id = p.id
         left join category c on c.id = p.category_id
         where o.status = 5 and
-         c.shop_id = #{shopId} and
-         o.completed_time &gt;= #{startTime} and
-         o.completed_time &lt;= #{endTime}
-         group by date_format(o.completed_time, #{formatType});
+        c.shop_id = #{shopId} and
+        o.completed_time &gt;= #{startTime} and
+        o.completed_time &lt;= #{endTime}
+        group by
+        <if test="formatType == '%w'">
+            (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1;
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w');
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m');
+        </if>
     </select>
     <select id="selectOrderByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
             resultMap="BaseResultMap">
@@ -293,23 +328,43 @@
          o.completed_time &lt;= #{endTime};
     </select>
     <select id="selectUserByShopAndPeriodTime" parameterType="com.ita.domain.dto.suadmin.query.OrderQuery"
-      resultMap="OrderUserMap">
-      select type, count(user_id) as user_count
-      FROM (select DISTINCT date_format(o.completed_time, #{formatType}) type , u.id user_id
-             FROM user u
-                    LEFT JOIN `order` o
-                              ON u.id = o.user_id
-                    LEFT JOIN order_item oi
-                              ON o.order_number = oi.order_number
-                    LEFT JOIN product p
-                              ON oi.product_id = p.id
-                    LEFT JOIN category c
-                              ON c.id = p.category_id
-      where o.status = 5 and
+            resultMap="OrderUserMap">
+        select type, count(user_id) as user_count
+        FROM (select DISTINCT
+        <if test="formatType == '%w'">
+            ( (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1 ) type,
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w') type,
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m') type,
+        </if>
+        u.id user_id
+        FROM user u
+        LEFT JOIN `order` o
+        ON u.id = o.user_id
+        LEFT JOIN order_item oi
+        ON o.order_number = oi.order_number
+        LEFT JOIN product p
+        ON oi.product_id = p.id
+        LEFT JOIN category c
+        ON c.id = p.category_id
+        where o.status = 5 and
         c.shop_id = #{shopId} and
         o.completed_time &gt;= #{startTime} and
         o.completed_time &lt;= #{endTime}
-      group by date_format(o.completed_time, #{formatType})) as temp group by user_id;
+        group by
+        <if test="formatType == '%w'">
+            (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1
+        </if>
+        <if test="formatType == '%e'">
+            date_format(o.completed_time, '%w')
+        </if>
+        <if test="formatType == '%m'">
+            date_format(o.completed_time, '%m')
+        </if>
+        ) as temp group by user_id;
     </select>
     <select id="selectRecentOrderByUserId"  resultMap="OrderMap">
       select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,

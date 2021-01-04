@@ -1,6 +1,7 @@
 package com.ita.domain.service;
 
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
@@ -23,4 +24,6 @@ public interface ProductService {
   PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize);
 
   Boolean updateProductStatus(ProductStatusDTO productStatusDTO);
+
+  ShopDTO searchProductByName(String searchKey, Integer shopId, Integer userId);
 }

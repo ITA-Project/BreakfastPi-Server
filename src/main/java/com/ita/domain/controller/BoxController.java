@@ -47,9 +47,13 @@ public class BoxController {
         return boxServiceImpl.update(box);
     }
 
-    @PutMapping("/status")
-    public ResponseEntity<Boolean> updateBoxesStatus(@RequestParam List<Integer> orderIds){
+    @PutMapping("/open")
+    public ResponseEntity<Boolean> updateBoxesStatus(@RequestBody List<Integer> orderIds) {
         return ResponseEntity.ok(boxServiceImpl.openAssociateOrdersBoxes(orderIds));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Boolean> updateBoxStatusById(@PathVariable Integer id, @RequestParam Integer status) {
+        return ResponseEntity.ok(boxServiceImpl.updateStatusById(id, status));
+    }
 }

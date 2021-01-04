@@ -1,8 +1,7 @@
 package com.ita.domain.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.*;
+import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
@@ -40,16 +39,20 @@ public class OrderServiceImpl implements OrderService {
     private IdWorker idWorker;
     @Resource
     private CategoryMapper categoryMapper;
-    @Autowired
+    @Resource
     private ShopMapper shopMapper;
     @Autowired
     private MqttMessageServiceImpl mqttMessageService;
 
     @Override
-    public PageInfo<OrderDTO> getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
-        PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orders = orderMapper.getOrdersByUser(userId, statusList);
-        return new PageInfo<>(orders);
+    public PageResult getUserOrders(Integer userId, int page, int pageSize, List<Integer> statusList) {
+        int total = orderMapper.countUserOrders(userId, statusList);
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.getOrdersByUser(userId, statusList, (page - 1) * pageSize, pageSize));
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
     }
 
     @Override
@@ -85,18 +88,18 @@ public class OrderServiceImpl implements OrderService {
         return OrderDTO.of(order, ShopDTO.of(shop), BoxDTO.of(box), orderItemDTOs);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = BusinessException.class)
     @Override
     public OrderDTO createOrder(Integer userId, String address, LocalDateTime expectedMealTime) throws BusinessException {
         /*
           1.获取用户购物车信息
-          2.确定柜子号
+          2.确定柜子号 // 加锁
           3.计算订单总价
           4.生成订单号
-          5.创建订单
-          6.更新订单项
-          7.更新商品库存和销量
-          8.清空购物车
+          5.扣减库存  //加锁 8.增加商品销量
+          6.创建订单
+          7.更新订单项
+          9.清空购物车
          */
 
         List<Cart> cartList = cartMapper.selectByUserId(userId);
@@ -104,15 +107,13 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorResponseEnum.CART_IS_EMPTY);
         }
 
-        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
-        if (CollectionUtils.isEmpty(freeBoxList)) {
-            throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
-        }
-        Box box = determineBox(freeBoxList);
+        Box box = determineBox(address);
 
         List<OrderItemDTO> orderItemDTOList = generateOrderItemDTO(cartList);
 
         double orderTotalPrice = getOrderTotalPrice(orderItemDTOList);
+
+        updateStockAndSale(cartList);
 
         Order order = Order.builder()
                 .orderNumber(idWorker.nextId() + "")
@@ -126,18 +127,20 @@ public class OrderServiceImpl implements OrderService {
 
         saveOrderItem(cartList, order.getOrderNumber());
 
-        updateStockAndSale(orderItemDTOList);
-
         clearCart(cartList);
 
         return OrderDTO.of(order, BoxDTO.of(box), orderItemDTOList);
     }
 
     @Override
-    public PageInfo<OrderDTO> getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orderDTOS = this.orderMapper.selectOrdersByStatus(statusList);
-        return new PageInfo<>(orderDTOS);
+    public PageResult getOrdersByStatus(List<Integer> statusList, int page, int pageSize) {
+        int total = orderMapper.countOrdersByStatus(statusList);
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.selectOrdersByStatus(statusList, (page - 1) * pageSize, pageSize));
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
     }
 
     @Override
@@ -174,15 +177,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds){
+    public List<OrderDTO> getOrdersByIds(List<Integer> orderIds) {
         return this.orderMapper.selectOrdersByIds(orderIds);
     }
 
-    // todo 后续可以优化逻辑
-    private Box determineBox(List<Box> freeBoxList) {
+    private synchronized Box determineBox(String address) throws BusinessException {
+        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
+        if (CollectionUtils.isEmpty(freeBoxList)) {
+            throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
+        }
         Box box = freeBoxList.get(FIRST);
         box.setStatus(BoxStatusEnum.RESERVED.getCode());
-        box.setUpdateTime(LocalDateTime.now());
         boxMapper.updateByPrimaryKey(box);
         return box;
     }
@@ -218,12 +223,32 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-    private void updateStockAndSale(List<OrderItemDTO> orderItemDTOList) {
-        orderItemDTOList.forEach(item -> {
-            Product product = ProductDTO.toProduct(item.getProduct());
-            product.setSales(product.getSales() + 1);
-            product.setStock(product.getStock() - 1);
-            productMapper.update(product);
+    private synchronized void updateStockAndSale(List<Cart> cartList) throws BusinessException {
+        // 第一步： 查询
+        List<Integer> productIdList = cartList.stream().map(Cart::getProductId).collect(Collectors.toList());
+
+        // 第二步：判断
+        List<Product> products = productMapper.selectAllByProductIds(productIdList);
+
+        List<Product> needUpdateProducts = new ArrayList<>();
+        for (Product product : products) {
+            Integer stock = product.getStock();
+            Integer quantity = cartList.stream().filter(item -> product.getId().equals(item.getProductId())).collect(Collectors.toList()).get(FIRST).getQuantity();
+            if (quantity > stock) {
+                String errorMessage = String.format("商品[%s]库存不足", product.getName());
+                throw new BusinessException(ErrorResponseEnum.STOCK_NOT_ENOUGH, errorMessage);
+            } else {
+                Product current = new Product();
+                BeanUtils.copyProperties(product, current);
+                current.setStock(stock - quantity);
+                current.setSales(product.getSales() + quantity);
+                needUpdateProducts.add(current);
+            }
+        }
+
+        // 第三步：修改
+        needUpdateProducts.forEach(item -> {
+            productMapper.update(item);
         });
     }
 
@@ -234,14 +259,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<OrderDTO> getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
-        List<Integer> categoryIdList = categoryMapper.selectAllByShopId(shopId)
-                .stream().map(Category::getId).collect(Collectors.toList());
-        List<Integer> productIdList = productMapper.selectAllByCategoryIds(categoryIdList)
-                .stream().map(Product::getId).collect(Collectors.toList());
-        PageHelper.startPage(page, pageSize);
-        List<OrderDTO> orders = orderMapper.getOrdersByShop(statusList, productIdList);
-        return new PageInfo<>(orders);
+    public PageResult getShopOrders(Integer shopId, int page, int pageSize, List<Integer> statusList) {
+        List<String> shopOrderNumbers = orderMapper.getShopOrderNumber(shopId, statusList);
+        int total = shopOrderNumbers.size();
+        List<OrderDTO> orders = convertOrderDTO(orderMapper.getOrdersByShop(shopOrderNumbers, (page - 1) * pageSize, pageSize));
+        int totalPage = total / pageSize;
+        if (total < pageSize && total != 0) {
+            totalPage = 1;
+        }
+        return PageResult.builder().list(orders).total(total).totalPage(totalPage).build();
+    }
+
+    private List<OrderDTO> convertOrderDTO(List<Order> orderList) {
+        return orderList.stream().map(n -> {
+            List<OrderItemDTO> orderItemDTOList = orderItemMapper.selectAllByOrderNumber(n.getOrderNumber()).stream().map(o -> {
+                Product product = productMapper.selectByPrimaryKey(o.getProductId());
+                ProductDTO productDTO = Objects.nonNull(product) ? ProductDTO.of(product) : new ProductDTO();
+                return OrderItemDTO.of(o, productDTO);
+            }).collect(Collectors.toList());
+            Box box = boxMapper.selectByPrimaryKey(n.getBoxId());
+            BoxDTO boxDTO = Objects.nonNull(box) ? BoxDTO.of(box) : new BoxDTO();
+            return OrderDTO.of(n, boxDTO, orderItemDTOList);
+        }).collect(Collectors.toList());
     }
 
     @Override

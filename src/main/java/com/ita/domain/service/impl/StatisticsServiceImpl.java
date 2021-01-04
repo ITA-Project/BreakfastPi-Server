@@ -1,17 +1,15 @@
 package com.ita.domain.service.impl;
 
 import com.ita.domain.dto.OrderSaleDTO;
-import com.ita.domain.dto.suadmin.HotProduct;
-import com.ita.domain.dto.suadmin.OrderTime;
-import com.ita.domain.dto.suadmin.SaleData;
-import com.ita.domain.dto.suadmin.SaleDataDTO;
-import com.ita.domain.dto.suadmin.UserData;
-import com.ita.domain.dto.suadmin.UserDataDTO;
+import com.ita.domain.dto.suadmin.*;
 import com.ita.domain.dto.suadmin.query.OrderQuery;
 import com.ita.domain.entity.Order;
+import com.ita.domain.entity.Shop;
 import com.ita.domain.enums.FormatTimeTypeEnum;
+import com.ita.domain.error.BusinessException;
 import com.ita.domain.mapper.OrderMapper;
 import com.ita.domain.mapper.ProductMapper;
+import com.ita.domain.mapper.ShopMapper;
 import com.ita.domain.service.StatisticsService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,8 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.util.StringUtils;
-import org.w3c.dom.UserDataHandler;
 
+import static com.ita.domain.error.ErrorResponseEnum.SHOP_NOT_EXIST;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.util.Collections.EMPTY_LIST;
 
@@ -33,6 +30,8 @@ public class StatisticsServiceImpl implements StatisticsService {
   private ProductMapper productMapper;
 
   private OrderMapper orderMapper;
+
+  private ShopMapper shopMapper;
 
   @Autowired
   public void setProductMapper(ProductMapper productMapper) {
@@ -44,8 +43,17 @@ public class StatisticsServiceImpl implements StatisticsService {
     this.orderMapper = orderMapper;
   }
 
+  @Autowired
+  public void setShopMapper(ShopMapper shopMapper) {
+    this.shopMapper = shopMapper;
+  }
+
   @Override
-  public SaleDataDTO generateStatisticsData(Integer shopId, String type) {
+  public SaleDataDTO generateStatisticsData(Integer shopId, String type) throws BusinessException {
+    Shop shop = shopMapper.selectByPrimaryKey(shopId);
+    if (Objects.isNull(shop)) {
+      throw new BusinessException(SHOP_NOT_EXIST);
+    }
     return SaleDataDTO.builder().hot(generateHotProductStatistics(shopId, type))
             .orderTime(generateOrderTimeStatistics(shopId, type))
             .user(generateUserDataStatistics(shopId, type))
@@ -55,15 +63,16 @@ public class StatisticsServiceImpl implements StatisticsService {
   private HotProduct generateHotProductStatistics(Integer shopId, String type) {
     Map<Integer, Long> data = new HashMap<>();
     productMapper.selectAll().forEach(
-        product ->
-                data.put(product.getId(), orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
+            product ->
+                    data.put(product.getId(), orderMapper.selectOrdersByProductIdAndShopAndPeriodTime(OrderQuery.from(product.getId(), shopId, type)))
     );
 
-    Map<Integer, Long> sortedMap = new HashMap<>();
+    Map<Integer, Long> sortedMap = new LinkedHashMap<>();
+
     data.entrySet().stream()
-            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-            .forEachOrdered(s -> sortedMap.put(s.getKey(), s.getValue()));
-    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()), sortedMap);
+            .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
+            .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+    return HotProduct.from(sortedMap.keySet().stream().map(id -> productMapper.selectByPrimaryKey(id)).collect(Collectors.toList()).subList(0, 7), new ArrayList<>(sortedMap.values()).subList(0, 7));
   }
 
   private SaleData generateSaleDataStatistics(Integer shopId, String type) {

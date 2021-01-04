@@ -1,7 +1,5 @@
 package com.ita.domain.service.impl;
 
-import static com.ita.common.constant.Constant.HEADER_AUTHORIZATION;
-
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.ita.domain.config.RiderMiniProgramerConfig;
@@ -9,16 +7,12 @@ import com.ita.domain.config.UserMiniProgramerConfig;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.entity.User;
 import com.ita.domain.enums.UserRoleEnum;
+import com.ita.domain.enums.UserStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.service.LoginService;
 import com.ita.domain.service.UserService;
 import com.ita.utils.JWTTokenUtils;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,11 +21,20 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import static com.ita.common.constant.Constant.HEADER_AUTHORIZATION;
 
 @Service
 @Slf4j
@@ -68,16 +71,23 @@ public class LoginServiceImpl implements LoginService {
             token = JWTTokenUtils.getUserToken(dbExistedUser);
         } else {
             user = User.builder()
-                .openid(openId)
-                .role(role)
-                .username("wxuser" + openId).build();
+                    .openid(openId)
+                    .role(role)
+                    .username("wxuser" + openId)
+                    .status(UserStatusEnum.ACTIVE.getCode())
+                    .statusMessage(UserStatusEnum.ACTIVE.getValue())
+                    .build();
             userServiceImpl.create(user);
             token = JWTTokenUtils.getUserToken(user);
         }
         if (StringUtils.isEmpty(token)) {
             throw new BusinessException(ErrorResponseEnum.ACCESS_LOGIN_FAIL);
         } else {
-            redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
+            try {
+                redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
+            } catch (RedisConnectionFailureException e) {
+                throw new BusinessException(ErrorResponseEnum.REDIS_CONNECT_FAIL);
+            }
         }
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("token", token);
@@ -120,7 +130,9 @@ public class LoginServiceImpl implements LoginService {
         if (!user.isPresent()) {
             return ResponseEntity.ok(UserDTO.builder().build());
         }
-        response.setHeader(HEADER_AUTHORIZATION, JWTTokenUtils.getUserToken(user.get()));
+        String token = JWTTokenUtils.getUserToken(user.get());
+        response.setHeader(HEADER_AUTHORIZATION, token);
+        redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
         return ResponseEntity.ok(UserDTO.of(user.get()));
     }
 }

@@ -24,4 +24,6 @@ public interface ProductMapper {
     int deleteByCategoryId(Integer categoryId);
 
     List<Product> selectByStatus(Integer status);
+
+    List<Product> selectAllByCategoryIdsAndSearchKeyList(List<Integer> categoryIds, List<String> searchKeyList);
 }

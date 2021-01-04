@@ -65,4 +65,9 @@ public class BoxServiceImpl implements BoxService {
         boxIds.stream().forEach(id -> mqttMessageService.send(id));
         return true;
     }
+
+    @Override
+    public boolean updateStatusById(Integer id, Integer status) {
+        return boxMapper.updateStatusById(id, status) == 1;
+    }
 }
