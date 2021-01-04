@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.UserAccountDTO;
 import com.ita.domain.dto.UserDTO;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
+import com.ita.domain.entity.User;
 import com.ita.domain.enums.UserRoleEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.LoginService;
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<PageInfo<UserDTO>> getPageableUser(@RequestParam int page, @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseEntity<PageInfo<User>> getPageableUser(@RequestParam int page, @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.selectAll(page, pageSize));
     }
 }
