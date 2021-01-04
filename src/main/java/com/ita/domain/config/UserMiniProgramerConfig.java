@@ -10,4 +10,6 @@ import org.springframework.stereotype.Component;
 public class UserMiniProgramerConfig {
   private String appId;
   private String appSecret;
+  private String subscribeMsgTemplateId;
+  private String miniprogramState;
 }

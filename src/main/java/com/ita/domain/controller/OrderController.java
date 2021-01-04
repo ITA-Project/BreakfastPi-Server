@@ -56,7 +56,7 @@ public class OrderController {
     }
 
     @PutMapping("/status/delivered")
-    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) {
+    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) throws Exception {
         return ResponseEntity.ok(this.orderService.updateStatusToDeliveredByOrders(orderIds));
     }
 

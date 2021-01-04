@@ -21,7 +21,7 @@ public interface OrderService {
 
     PageResult getOrdersByStatus(List<Integer> statusList, int page, int pageSize);
 
-    boolean updateStatusToDeliveredByOrders(List<Integer> orderIds);
+    boolean updateStatusToDeliveredByOrders(List<Integer> orderIds) throws Exception;
 
     boolean updateStatusToCompletedByOrders(List<Integer> orderIds);
 
