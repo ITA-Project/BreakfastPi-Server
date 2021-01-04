@@ -8,15 +8,15 @@ import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
-import com.ita.domain.enums.UserStatusEnum;
 import com.ita.domain.enums.UserRoleEnum;
+import com.ita.domain.enums.UserStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.mapper.*;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
-import lombok.extern.slf4j.Slf4j;
 import com.ita.utils.WXServiceUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -342,8 +342,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean updateStatusByOrderNumber(String orderNumber, Integer status, HttpServletRequest request) {
-        Integer userId = Integer.valueOf((String) request.getAttribute(USER_ID));
-        if (status.equals(OrderStatusEnum.CANCELED.getCode()) && Objects.nonNull(userId)) {
+        String requestUserId = (String) request.getAttribute(USER_ID);
+        if (status.equals(OrderStatusEnum.CANCELED.getCode()) && !StringUtils.isEmpty(requestUserId)) {
+            Integer userId = Integer.valueOf(requestUserId);
             String key = CANCEL_COUNT_OF_USER + userId;
             String cancelCountStr = redisTemplate.opsForValue().get(key);
             String cancelCount = StringUtils.isEmpty(cancelCountStr) ? "" : cancelCountStr.trim();
