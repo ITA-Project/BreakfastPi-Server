@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.ita.domain.error.ErrorResponseEnum.USER_NOT_EXIST;
 
@@ -45,9 +44,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageInfo<UserInfoDTO> selectByStatus(Integer status, int page, int pageSize) {
+    public PageInfo<User> selectByStatus(Integer status, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
-        return new PageInfo<>(userMapper.selectAllByStatus(status).stream().map(UserInfoDTO::from).collect(Collectors.toList()));
+        return new PageInfo<>(userMapper.selectAllByStatus(status));
     }
 
     @Override

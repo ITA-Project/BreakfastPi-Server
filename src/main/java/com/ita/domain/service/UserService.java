@@ -17,7 +17,7 @@ public interface UserService {
 
     User selectById(Integer userId);
 
-    PageInfo<UserInfoDTO> selectByStatus(Integer status, int page, int pageSize);
+    PageInfo<User> selectByStatus(Integer status, int page, int pageSize);
 
     User updateUserStatus(UserInfoDTO user) throws BusinessException;
 
