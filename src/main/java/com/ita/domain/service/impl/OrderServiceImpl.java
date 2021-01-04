@@ -285,6 +285,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean updateStatusByOrderNumber(String orderNumber, Integer status) {
+        if (OrderStatusEnum.CANCELED.getCode().equals(status)) {
+            cancelOrder(orderNumber);
+            return true;
+        }
         return orderMapper.updateStatusByOrderNumber(orderNumber, status) != 0;
     }
 
@@ -314,5 +318,25 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getRecentOrderByUserId(Integer userId) {
         return orderMapper.selectRecentOrderByUserId(userId);
+    }
+
+    @Transactional
+    void cancelOrder(String orderNumber) {
+        Order order = orderMapper.selectByOrderNumber(orderNumber);
+        Integer boxId = order.getBoxId();
+        boxMapper.updateStatusById(boxId, BoxStatusEnum.FREE.getCode());
+
+        List<OrderItem> orderItems = orderItemMapper.selectAllByOrderNumber(orderNumber);
+        for (OrderItem orderItem : orderItems) {
+            Integer productId = orderItem.getProductId();
+            Product product = productMapper.selectByPrimaryKey(productId);
+            product.setSales(product.getSales() - orderItem.getQuantity());
+            product.setStock(product.getStock() + orderItem.getQuantity());
+            productMapper.update(product);
+        }
+
+        order.setStatus(OrderStatusEnum.CANCELED.getCode());
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.updateByPrimaryKey(order);
     }
 }
