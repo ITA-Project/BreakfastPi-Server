@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,8 +101,7 @@ public class ProductServiceImpl implements ProductService{
         Shop shop = shopMapper.selectByPrimaryKey(shopId);
         List<Category> allCategories = categoryMapper.selectAllByShopId(shopId);
         List<Integer> categoryIds = allCategories.stream().map(Category::getId).collect(Collectors.toList());
-        List<String> wordList = this.generateWordList(searchKey);
-        List<Product> products = this.productMapper.selectAllByCategoryIdsAndSearchKeyList(categoryIds, wordList);
+        List<Product> products = getProductsBySearchKey(searchKey, categoryIds);
         UserSearchHistory userSearchHistory = UserSearchHistory
             .builder()
             .userId(userId)
@@ -115,6 +115,17 @@ public class ProductServiceImpl implements ProductService{
                 Collectors.toList());
         ShopDTO shopDTO = ShopDTO.of(shop, categories, products);
         return shopDTO;
+    }
+
+    private List<Product> getProductsBySearchKey(String searchKey, List<Integer> categoryIds) {
+        List<String> wordList = this.generateWordList(searchKey);
+        List<Product> products;
+        if(StringUtils.isEmpty(searchKey)) {
+            products = this.productMapper.selectAllByCategoryIds(categoryIds);
+        } else {
+            products = this.productMapper.selectAllByCategoryIdsAndSearchKeyList(categoryIds, wordList);
+        }
+        return products;
     }
 
     private List<String> generateWordList(String searchKey) {
