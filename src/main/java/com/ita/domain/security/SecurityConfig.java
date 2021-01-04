@@ -27,21 +27,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable();
     http.authorizeRequests()
-        .antMatchers(securityWhitelistHandler.getWhiteList())
-        .permitAll()
+            .antMatchers(securityWhitelistHandler.getWhiteList())
+            .permitAll()
 //        .antMatchers("/orders/denytest").hasAnyRole("admin")
 //        .antMatchers("/orders/testt", "/orders/denytest").hasAnyRole("user")
-        .anyRequest()
-        .authenticated()
-        .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-        .accessDeniedHandler(new CustomAccessDeniedHandler());
+            .anyRequest()
+            .authenticated()
+            .and()
+            .exceptionHandling()
+            .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            .accessDeniedHandler(new CustomAccessDeniedHandler());
     http.addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterAfter(userStatusCheckingFilter(), JWTAuthenticationFilter.class);
   }
 
   private JWTAuthenticationFilter jwtAuthenticationFilter() {
     return new JWTAuthenticationFilter(redisTemplate);
+  }
+
+  private UserStatusCheckingFilter userStatusCheckingFilter() {
+    return new UserStatusCheckingFilter(redisTemplate);
   }
 
 }

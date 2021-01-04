@@ -1,5 +1,6 @@
 package com.ita.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ita.domain.config.RiderMiniProgramerConfig;
 import com.ita.domain.config.UserMiniProgramerConfig;
 import com.ita.domain.dto.*;
@@ -7,28 +8,37 @@ import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.*;
 import com.ita.domain.enums.BoxStatusEnum;
 import com.ita.domain.enums.OrderStatusEnum;
+import com.ita.domain.enums.UserStatusEnum;
 import com.ita.domain.enums.UserRoleEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.mapper.*;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
+import lombok.extern.slf4j.Slf4j;
 import com.ita.utils.WXServiceUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.ita.common.constant.Constant.FIRST;
+import static com.ita.domain.constant.HttpParameterConstant.USER_ID;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
+    public static final String CANCEL_COUNT_OF_USER = "cancel_count_of_user_";
 
     public static final String APP_ID = "appId";
     public static final String APP_SECRET = "appSecret";
@@ -50,14 +60,16 @@ public class OrderServiceImpl implements OrderService {
     private CategoryMapper categoryMapper;
     @Resource
     private ShopMapper shopMapper;
-    @Autowired
+    @Resource
     private MqttMessageServiceImpl mqttMessageService;
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private UserMapper userMapper;
     @Autowired
     private UserMiniProgramerConfig userMiniProgramerConfig;
     @Autowired
     private RiderMiniProgramerConfig riderMiniProgramerConfig;
-    @Autowired
-    private UserMapper userMapper;
 
 
     @Override
@@ -162,15 +174,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean updateStatusToDeliveredByOrders(List<Integer> orderIds) throws Exception {
       for (Integer orderId : orderIds) {
-        Order order = this.orderMapper.selectByPrimaryKey(orderId);
-        if(order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
-          order.setStatus(OrderStatusEnum.DELIVERED.getCode());
-          order.setDeliverTime(LocalDateTime.now());
-          this.orderMapper.updateByPrimaryKey(order);
-        }
-        Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
-        box.setStatus(BoxStatusEnum.LOADED.getCode());
-        this.boxMapper.updateByPrimaryKey(box);
+            Order order = this.orderMapper.selectByPrimaryKey(orderId);
+            if(order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
+                order.setStatus(OrderStatusEnum.DELIVERED.getCode());
+                order.setDeliverTime(LocalDateTime.now());
+                this.orderMapper.updateByPrimaryKey(order);
+            }
+            Box box = this.boxMapper.selectByPrimaryKey(order.getBoxId());
+            box.setStatus(BoxStatusEnum.LOADED.getCode());
+            this.boxMapper.updateByPrimaryKey(box);
         User user = this.userMapper.selectByPrimaryKey(order.getUserId());
         this.sendSubscribeMessage(user, order, box);
       }
@@ -205,10 +217,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateStatusToCompletedByOrders(List<Integer> orderIds){
+    public boolean updateStatusToCompletedByOrders(List<Integer> orderIds) {
         orderIds.stream().forEach(orderId -> {
             Order order = this.orderMapper.selectByPrimaryKey(orderId);
-            if(order.getStatus().equals(OrderStatusEnum.DELIVERED.getCode())) {
+            if (order.getStatus().equals(OrderStatusEnum.DELIVERED.getCode())) {
                 order.setStatus(OrderStatusEnum.COMPLETED.getCode());
                 order.setCompletedTime(LocalDateTime.now());
                 this.orderMapper.updateByPrimaryKey(order);
@@ -329,7 +341,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateStatusByOrderNumber(String orderNumber, Integer status) {
+    public boolean updateStatusByOrderNumber(String orderNumber, Integer status, HttpServletRequest request) {
+        Integer userId = Integer.valueOf((String) request.getAttribute(USER_ID));
+        if (status.equals(OrderStatusEnum.CANCELED.getCode()) && Objects.nonNull(userId)) {
+            String key = CANCEL_COUNT_OF_USER + userId;
+            String cancelCountStr = redisTemplate.opsForValue().get(key);
+            String cancelCount = StringUtils.isEmpty(cancelCountStr) ? "" : cancelCountStr.trim();
+            if (StringUtils.isEmpty(cancelCount)) {
+                redisTemplate.opsForValue().set(key, "1", 10 * 60, TimeUnit.SECONDS);
+            } else {
+                int count = Integer.valueOf(cancelCount);
+                if (++count >= 3) {
+                    userMapper.updateStatusById(userId, UserStatusEnum.INACTIVE.getCode(), "恶意下单：十分钟内取消三次");
+                    User user = userMapper.selectByPrimaryKey(userId);
+                    redisTemplate.opsForValue().set(String.valueOf(user.getId()), JSON.toJSONString(user));
+                } else {
+                    redisTemplate.opsForValue().set(key, String.valueOf(count));
+                }
+            }
+        }
+        if (OrderStatusEnum.CANCELED.getCode().equals(status)) {
+            cancelOrder(orderNumber);
+            return true;
+        }
         return orderMapper.updateStatusByOrderNumber(orderNumber, status) != 0;
     }
 
@@ -359,5 +393,25 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getRecentOrderByUserId(Integer userId) {
         return orderMapper.selectRecentOrderByUserId(userId);
+    }
+
+    @Transactional
+    void cancelOrder(String orderNumber) {
+        Order order = orderMapper.selectByOrderNumber(orderNumber);
+        Integer boxId = order.getBoxId();
+        boxMapper.updateStatusById(boxId, BoxStatusEnum.FREE.getCode());
+
+        List<OrderItem> orderItems = orderItemMapper.selectAllByOrderNumber(orderNumber);
+        for (OrderItem orderItem : orderItems) {
+            Integer productId = orderItem.getProductId();
+            Product product = productMapper.selectByPrimaryKey(productId);
+            product.setSales(product.getSales() - orderItem.getQuantity());
+            product.setStock(product.getStock() + orderItem.getQuantity());
+            productMapper.update(product);
+        }
+
+        order.setStatus(OrderStatusEnum.CANCELED.getCode());
+        order.setCancelTime(LocalDateTime.now());
+        orderMapper.updateByPrimaryKey(order);
     }
 }

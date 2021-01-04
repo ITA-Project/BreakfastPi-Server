@@ -30,8 +30,8 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public void save(List<CartDTO> cartDTOList) {
-        cartMapper.deleteByUserId(cartDTOList.get(0).getUserId());
+    public void save(Integer userId, List<CartDTO> cartDTOList) {
+        cartMapper.deleteByUserId(userId);
         cartDTOList.forEach(cartDTO -> cartMapper.insert(Cart.builder()
                 .productId(cartDTO.getProductId())
                 .quantity(cartDTO.getQuantity())

@@ -18,11 +18,13 @@ public class CartController {
     public void setCartService(CartService cartService) {
         this.cartService = cartService;
     }
-    @PostMapping
-    public ResponseEntity<Boolean> save(@RequestBody List<CartDTO> cartDTOList) {
-        cartService.save(cartDTOList);
+
+    @PostMapping(path = "/{userId}")
+    public ResponseEntity<Boolean> save(@PathVariable("userId") Integer userId, @RequestBody List<CartDTO> cartDTOList) {
+        cartService.save(userId, cartDTOList);
         return ResponseEntity.ok(true);
     }
+
     @GetMapping
     public ResponseEntity<List<com.ita.domain.dto.CartDTO>> getCartByCurrentUser(Integer userId) {
         return ResponseEntity.ok(cartService.getCartByUserId(userId));
