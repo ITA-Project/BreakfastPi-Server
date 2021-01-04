@@ -2,6 +2,7 @@ package com.ita.domain.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Category;
@@ -14,10 +15,12 @@ import com.ita.domain.mapper.ShopMapper;
 import com.ita.domain.mapper.UserSearchHistoryMapper;
 import com.ita.domain.service.ProductService;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,9 +96,10 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<com.ita.domain.dto.ProductDTO> searchProductByName(String searchKey, Integer shopId, Integer userId) {
-        List<Category> categories = categoryMapper.selectAllByShopId(shopId);
-        List<Integer> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
+    public ShopDTO searchProductByName(String searchKey, Integer shopId, Integer userId) {
+        Shop shop = shopMapper.selectByPrimaryKey(shopId);
+        List<Category> allCategories = categoryMapper.selectAllByShopId(shopId);
+        List<Integer> categoryIds = allCategories.stream().map(Category::getId).collect(Collectors.toList());
         List<String> wordList = this.generateWordList(searchKey);
         List<Product> products = this.productMapper.selectAllByCategoryIdsAndSearchKeyList(categoryIds, wordList);
         UserSearchHistory userSearchHistory = UserSearchHistory
@@ -105,7 +109,12 @@ public class ProductServiceImpl implements ProductService{
             .searchKey(searchKey)
             .build();
         userSearchHistoryMapper.insert(userSearchHistory);
-        return products.stream().map(product -> com.ita.domain.dto.ProductDTO.of(product)).collect(Collectors.toList());
+        List<Category> categories = allCategories.stream().filter(
+            category -> CollectionUtils.isNotEmpty(products.stream().filter(product -> product.getCategoryId().equals(category.getId())).collect(Collectors.toList())))
+            .collect(
+                Collectors.toList());
+        ShopDTO shopDTO = ShopDTO.of(shop, categories, products);
+        return shopDTO;
     }
 
     private List<String> generateWordList(String searchKey) {

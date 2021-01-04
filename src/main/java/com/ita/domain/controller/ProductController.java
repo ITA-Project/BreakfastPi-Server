@@ -1,6 +1,7 @@
 package com.ita.domain.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.ita.domain.dto.ShopDTO;
 import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Product;
@@ -64,8 +65,8 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<com.ita.domain.dto.ProductDTO>> searchByName(@RequestParam String name, @RequestParam Integer shopId,
+    public ShopDTO searchByName(@RequestParam String name, @RequestParam Integer shopId,
         @RequestParam Integer userId) {
-        return ResponseEntity.ok(this.productService.searchProductByName(name, shopId, userId));
+        return this.productService.searchProductByName(name, shopId, userId);
     }
 }
