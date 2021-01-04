@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ShopService {
 
+    ShopDTO assembleValidShopDTOByShopId(Integer id);
+
     ShopDTO assembleShopDTOByShopId(Integer id);
 
     Shop selectById(Integer id);
