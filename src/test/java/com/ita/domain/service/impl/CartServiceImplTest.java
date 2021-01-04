@@ -35,7 +35,7 @@ public class CartServiceImplTest {
         //given
         List<CartDTO> cartDTOList = Collections.singletonList(buildCartVO());
         //when
-        getCartService().save(cartDTOList);
+        getCartService().save(cartDTOList.get(0).getUserId(), cartDTOList);
         //then
         verify(cartMapper, times(1)).deleteByUserId(1);
         verify(cartMapper, times(1)).insert(any());
