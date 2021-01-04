@@ -70,4 +70,9 @@ public class UserServiceImpl implements UserService {
         List<UserDTO> userDTOS = userMapper.selectAll().stream().map(UserDTO::of).collect(Collectors.toList());
         return new PageInfo<>(userDTOS, pageSize);
     }
+
+    @Override
+    public int updateStatusById(Integer id, Integer status, String statusMessage) {
+        return userMapper.updateStatusById(id, status, statusMessage);
+    }
 }

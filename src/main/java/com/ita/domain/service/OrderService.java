@@ -6,6 +6,7 @@ import com.ita.domain.dto.common.PageResult;
 import com.ita.domain.entity.Order;
 import com.ita.domain.error.BusinessException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface OrderService {
 
     PageResult getShopOrders(Integer shop, int page, int pageSize, List<Integer> statusList);
 
-    boolean updateStatusByOrderNumber(String orderNumber, Integer status);
+    boolean updateStatusByOrderNumber(String orderNumber, Integer status, HttpServletRequest request);
 
     OrderDTO getRecentOrderByUserId(Integer userId);
 }

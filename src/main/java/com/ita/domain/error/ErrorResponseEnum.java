@@ -27,6 +27,7 @@ public enum ErrorResponseEnum implements ErrorResponse {
     ACCESS_NOT_LOGIN(40001, "认证失败"),
     ACCESS_DENY(40002, "权限不足"),
     ACCESS_LOGIN_FAIL(40003, "登录失败"),
+    USER_BANNED(40004, "用户已被封禁"),
     REDIS_CONNECT_FAIL(50000, "Redis连接失败");
 
     private final int errCode;

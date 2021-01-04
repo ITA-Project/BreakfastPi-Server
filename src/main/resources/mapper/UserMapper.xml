@@ -43,6 +43,13 @@
             update_time = now()
         where id = #{id,jdbcType=INTEGER}
     </update>
+    <update id="updateStatusById">
+        update user
+        set status      = #{status,jdbcType=INTEGER},
+            status_message = #{statusMessage,jdbcType=VARCHAR},
+            update_time = now()
+        where id = #{id,jdbcType=INTEGER}
+    </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select id,
                username,
