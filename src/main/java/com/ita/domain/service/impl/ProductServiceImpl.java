@@ -3,7 +3,6 @@ package com.ita.domain.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ita.domain.dto.ShopDTO;
-import com.ita.domain.dto.suadmin.ProductDTO;
 import com.ita.domain.dto.suadmin.ProductStatusDTO;
 import com.ita.domain.entity.Category;
 import com.ita.domain.entity.Product;
@@ -14,19 +13,16 @@ import com.ita.domain.mapper.ProductMapper;
 import com.ita.domain.mapper.ShopMapper;
 import com.ita.domain.mapper.UserSearchHistoryMapper;
 import com.ita.domain.service.ProductService;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -80,9 +76,9 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public PageInfo<ProductDTO> getProductByStatus(Integer productStatus, int page, int pageSize) {
+    public PageInfo<Product> getProductByStatus(Integer productStatus, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
-        return new PageInfo<>(productMapper.selectByStatus(productStatus).stream().map(ProductDTO::from).collect(Collectors.toList()));
+        return new PageInfo<>(productMapper.selectByStatus(productStatus));
     }
 
     @Override

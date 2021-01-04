@@ -20,4 +20,6 @@ public interface UserMapper {
     User selectByUsername(String openId);
 
     List<User> selectAllByStatus(Integer status);
+
+    int updateStatusById(Integer id, Integer status, String statusMessage);
 }

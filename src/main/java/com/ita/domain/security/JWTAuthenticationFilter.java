@@ -1,6 +1,6 @@
 package com.ita.domain.security;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.ita.domain.constant.HttpParameterConstant;
@@ -24,22 +24,16 @@ import java.util.Objects;
 @Slf4j
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public JWTAuthenticationFilter(RedisTemplate redisTemplate) {
+    public JWTAuthenticationFilter(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        if (!Objects.isNull(authentication)) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            User user = (User) authentication.getPrincipal();
-            request.setAttribute("userid", user.getId());
-        }
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(request));
         chain.doFilter(request, response);
     }
 
@@ -60,16 +54,16 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             logger.error(e.getMessage(), e);
             return null;
         }
-        String redisTokenStr = (String) redisTemplate.opsForValue().get(keyId);
+        String redisTokenStr = redisTemplate.opsForValue().get(keyId);
         if (Objects.isNull(redisTokenStr)) {
             return null;
         }
-        User redisUser = JSONObject.parseObject(redisTokenStr, User.class);
+        User redisUser = JSON.parseObject(redisTokenStr, User.class);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 UsernamePasswordAuthenticationTokenUtils.generateUsernamePasswordAuthenticationToken(redisUser, redisUser.getRole());
         if (!Objects.isNull(usernamePasswordAuthenticationToken)) {
             User user = (User) usernamePasswordAuthenticationToken.getPrincipal();
-            request.setAttribute(HttpParameterConstant.USER_ID, user.getId());
+            request.setAttribute(HttpParameterConstant.USER_ID, String.valueOf(user.getId()));
             return usernamePasswordAuthenticationToken;
         } else {
             return null;

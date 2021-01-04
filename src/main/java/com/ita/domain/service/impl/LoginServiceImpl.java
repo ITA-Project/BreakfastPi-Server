@@ -132,7 +132,7 @@ public class LoginServiceImpl implements LoginService {
         }
         String token = JWTTokenUtils.getUserToken(user.get());
         response.setHeader(HEADER_AUTHORIZATION, token);
-        redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
+        redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user.get()));
         return ResponseEntity.ok(UserDTO.of(user.get()));
     }
 }

@@ -7,12 +7,11 @@ import com.ita.domain.entity.Order;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.service.impl.OrderServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,9 +22,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderServiceImpl orderService;
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
     public OrderController(OrderServiceImpl orderService) {
         this.orderService = orderService;
@@ -60,7 +56,7 @@ public class OrderController {
     }
 
     @PutMapping("/status/delivered")
-    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) {
+    public ResponseEntity<Boolean> updateOrdersStatusToDelivered(@RequestBody List<Integer> orderIds) throws Exception {
         return ResponseEntity.ok(this.orderService.updateStatusToDeliveredByOrders(orderIds));
     }
 
@@ -80,8 +76,8 @@ public class OrderController {
     }
 
     @PutMapping("/{orderNumber}")
-    public ResponseEntity<Boolean> updateStatusByOrderNumber(@PathVariable String orderNumber, @RequestParam Integer status) {
-        return ResponseEntity.ok(orderService.updateStatusByOrderNumber(orderNumber, status));
+    public ResponseEntity<Boolean> updateStatusByOrderNumber(@PathVariable String orderNumber, @RequestParam Integer status, HttpServletRequest request) {
+        return ResponseEntity.ok(orderService.updateStatusByOrderNumber(orderNumber, status, request));
     }
 
     @GetMapping("/recent")

@@ -1,7 +1,6 @@
 package com.ita.domain.service;
 
 import com.github.pagehelper.PageInfo;
-import com.ita.domain.dto.UserDTO;
 import com.ita.domain.dto.suadmin.UserInfoDTO;
 import com.ita.domain.entity.User;
 import com.ita.domain.error.BusinessException;
@@ -18,8 +17,11 @@ public interface UserService {
 
     User selectById(Integer userId);
 
-    PageInfo<UserInfoDTO> selectByStatus(Integer status, int page, int pageSize);
+    PageInfo<User> selectByStatus(Integer status, int page, int pageSize);
+
     User updateUserStatus(UserInfoDTO user) throws BusinessException;
 
-    PageInfo<UserDTO> selectAll(int page, int pageSize);
+    PageInfo<User> selectAll(int page, int pageSize);
+
+    int updateStatusById(Integer id, Integer status, String statusMessage);
 }
