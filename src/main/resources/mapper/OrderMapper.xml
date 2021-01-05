@@ -354,17 +354,7 @@
         c.shop_id = #{shopId} and
         o.completed_time &gt;= #{startTime} and
         o.completed_time &lt;= #{endTime}
-        group by
-        <if test="formatType == '%w'">
-            (day(o.completed_time)+WEEKDAY(o.completed_time-interval day(o.completed_time) day)) div 7 + 1
-        </if>
-        <if test="formatType == '%e'">
-            date_format(o.completed_time, '%w')
-        </if>
-        <if test="formatType == '%m'">
-            date_format(o.completed_time, '%m')
-        </if>
-        ) as temp group by user_id;
+        ) as temp group by type;
     </select>
     <select id="selectRecentOrderByUserId"  resultMap="OrderMap">
       select o.id, o.order_number, o.payment_time, o.deliver_time, o.store_time, o.accepted_time,

@@ -44,7 +44,7 @@ public class WXServiceUtil {
     }
   }
 
-  public static void sendWXMiniProgramSubscribeMsg(String accessToken, String openId, Map<String, String> data, String templateId, String pageURL,
+  public static void sendWXMiniProgramSubscribeMsg(String accessToken, String openId, Map<String, Object> data, String templateId, String pageURL,
       String miniProgramState) throws Exception {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     String url = String.format(POST_SEND_SUBSCRIBE_MESSAGE_URL, accessToken);

@@ -46,7 +46,7 @@ userminiprogramer:
   appId: wxeb9fc8420790d4fd
   appSecret: f32d7217755c1df12d45b7bd34a78a38
   subscribeMsgTemplateId: RoJnn-Rw1rbaCKceUIyzSMKUIY88QlgOepwPZ8shioI
-  miniprogramState: trial
+  miniprogramState: developer
 
 riderminiprogramer:
   appId: wxdac7c54380b8178f
