@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class UserDataDTO {
   private Integer type;
 
-  private Long userCount;
+  private Integer userCount;
 
 }
