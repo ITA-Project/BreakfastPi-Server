@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         }
         originalUser.setStatus(Integer.valueOf(user.getStatus()));
         originalUser.setStatusMessage(user.getStatusMessage());
-        redisTemplate.opsForValue().set(originalUser.getId(), JSON.toJSONString(originalUser), 1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(String.valueOf(originalUser.getId()), JSON.toJSONString(originalUser), 1, TimeUnit.DAYS);
         userMapper.updateByPrimaryKey(originalUser);
         return userMapper.selectByPrimaryKey(Integer.valueOf(user.getId()));
     }
