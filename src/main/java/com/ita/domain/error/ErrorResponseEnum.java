@@ -24,6 +24,7 @@ public enum ErrorResponseEnum implements ErrorResponse {
     ORDER_NUMBER_INCORRECT(30006, "订单号不存在"),
     ORDER_DATA_INCORRECT(30007, "订单数据不正确"),
     SHOP_NOT_EXIST(30008, "商家不存在"),
+    STOCK_DEDUCTION_FAILED(30009, "库存扣减失败"),
     ACCESS_NOT_LOGIN(40001, "认证失败"),
     ACCESS_DENY(40002, "权限不足"),
     ACCESS_LOGIN_FAIL(40003, "登录失败"),
