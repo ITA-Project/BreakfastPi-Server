@@ -17,6 +17,7 @@ import com.ita.domain.redis.RedisDistributedLock;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
 import com.ita.utils.WXServiceUtil;
+import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -45,6 +46,9 @@ public class OrderServiceImpl implements OrderService {
     private static final String APP_SECRET = "appSecret";
     private static final String SUBSCRIBE_MSG_TEMPLATE_ID = "subscribeMsgTemplateId";
     private static final String MINIPROGRAM_STATE = "miniprogram_state";
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER_ZH_CN = DateTimeFormatter.ofPattern("YYYY年M月d日 HH:mm");
+
     private static int stock = 50;
     @Resource
     private OrderMapper orderMapper;
@@ -194,14 +198,29 @@ public class OrderServiceImpl implements OrderService {
     public void sendSubscribeMessage(User user, Order order, Box box) throws Exception {
         Map<String, String> wxAppInfo = this.getWXAppInfo(user.getRole());
         String accessToken = WXServiceUtil.getWXMiniProgramAccessToken(wxAppInfo.get(APP_ID), wxAppInfo.get(APP_SECRET));
-        Map<String, String> data = new HashMap<>();
-        data.put("thing4", "早餐已送达");
-        data.put("thing8", box.getAddress() + "-" + box.getNumber());
-        data.put("character_string5", order.getOrderNumber());
-        data.put("date2", order.getCreateTime().toString());
+        Map<String, Object> subscribeData = buildSubscribeData(
+            "thing4", "早餐已送达",
+            "thing8", box.getAddress() + "-" + box.getNumber(),
+            "character_string5", order.getOrderNumber(),
+            "date2", DATE_TIME_FORMATTER_ZH_CN.format(order.getCreateTime())
+        );
         String pageURL = "/pages/order-detail/order-detail?orderNumber=";
         pageURL += order.getOrderNumber();
-        WXServiceUtil.sendWXMiniProgramSubscribeMsg(accessToken, user.getOpenid(), data, wxAppInfo.get(SUBSCRIBE_MSG_TEMPLATE_ID), pageURL, wxAppInfo.get(MINIPROGRAM_STATE));
+        WXServiceUtil.sendWXMiniProgramSubscribeMsg(accessToken, user.getOpenid(), subscribeData, wxAppInfo.get(SUBSCRIBE_MSG_TEMPLATE_ID), pageURL, wxAppInfo.get(MINIPROGRAM_STATE));
+    }
+
+    private Map<String, Object> buildSubscribeData(String... args) {
+        Map<String, Object> result = new HashMap<>();
+        for (int i = 0; i < args.length; i += 2) {
+            result.put(args[i], args[i + 1]);
+        }
+        return result;
+    }
+
+    private Map<String, String> buildValueMap(String value) {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("value", value);
+        return result;
     }
 
     private Map<String, String> getWXAppInfo(String role) {
