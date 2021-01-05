@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.ita.common.constant.Constant.HEADER_AUTHORIZATION;
 
@@ -84,7 +85,7 @@ public class LoginServiceImpl implements LoginService {
             throw new BusinessException(ErrorResponseEnum.ACCESS_LOGIN_FAIL);
         } else {
             try {
-                redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user));
+                redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user), 1, TimeUnit.DAYS);
             } catch (RedisConnectionFailureException e) {
                 throw new BusinessException(ErrorResponseEnum.REDIS_CONNECT_FAIL);
             }
@@ -132,7 +133,7 @@ public class LoginServiceImpl implements LoginService {
         }
         String token = JWTTokenUtils.getUserToken(user.get());
         response.setHeader(HEADER_AUTHORIZATION, token);
-        redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user.get()));
+        redisTemplate.opsForValue().set(JWT.decode(token).getKeyId(), JSON.toJSONString(user.get()), 1, TimeUnit.DAYS);
         return ResponseEntity.ok(UserDTO.of(user.get()));
     }
 }
