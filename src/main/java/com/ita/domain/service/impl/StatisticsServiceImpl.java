@@ -123,12 +123,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
   private UserData generateUserDataStatistics(Integer shopId, String type) {
     Integer count = FormatTimeTypeEnum.getByValue(type).getCount();
-    List<Long> userData = orderMapper.selectUserByShopAndPeriodTime(OrderQuery.from(shopId, type)).stream().map(UserDataDTO::getUserCount)
+    List<Integer> userData = orderMapper.selectUserByShopAndPeriodTime(OrderQuery.from(shopId, type)).stream().map(UserDataDTO::getUserCount)
         .collect(Collectors.toList());
     while (userData.size() < count) {
-      userData.add(0L);
+      userData.add(0);
     }
-    List<Long> userDataResult = type.equals(FormatTimeTypeEnum.YEAR.getValue()) ? userData.subList(0, 6) : userData;
+    List<Integer> userDataResult = type.equals(FormatTimeTypeEnum.YEAR.getValue()) ? userData.subList(0, 6) : userData;
     return UserData.builder().data(userDataResult).build();
   }
 

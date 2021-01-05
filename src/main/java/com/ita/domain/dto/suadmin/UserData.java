@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserData {
-  private List<Long> data;
+  private List<Integer> data;
 }
