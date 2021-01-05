@@ -13,6 +13,7 @@ import com.ita.domain.enums.UserStatusEnum;
 import com.ita.domain.error.BusinessException;
 import com.ita.domain.error.ErrorResponseEnum;
 import com.ita.domain.mapper.*;
+import com.ita.domain.redis.RedisDistributedLock;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
 import com.ita.utils.WXServiceUtil;
@@ -38,12 +39,13 @@ import static com.ita.domain.constant.HttpParameterConstant.USER_ID;
 @Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
-    public static final String CANCEL_COUNT_OF_USER = "cancel_count_of_user_";
+    private static final String CANCEL_COUNT_OF_USER = "cancel_count_of_user_";
 
-    public static final String APP_ID = "appId";
-    public static final String APP_SECRET = "appSecret";
-    public static final String SUBSCRIBE_MSG_TEMPLATE_ID = "subscribeMsgTemplateId";
-    public static final String MINIPROGRAM_STATE = "miniprogram_state";
+    private static final String APP_ID = "appId";
+    private static final String APP_SECRET = "appSecret";
+    private static final String SUBSCRIBE_MSG_TEMPLATE_ID = "subscribeMsgTemplateId";
+    private static final String MINIPROGRAM_STATE = "miniprogram_state";
+    private static int stock = 50;
     @Resource
     private OrderMapper orderMapper;
     @Resource
@@ -238,15 +240,25 @@ public class OrderServiceImpl implements OrderService {
         return this.orderMapper.selectOrdersByIds(orderIds);
     }
 
-    private synchronized Box determineBox(String address) throws BusinessException {
-        List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
-        if (CollectionUtils.isEmpty(freeBoxList)) {
-            throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
+    private Box determineBox(String address) throws BusinessException {
+        RedisDistributedLock redisDistributedLock = new RedisDistributedLock("box", redisTemplate);
+        try {
+            if (redisDistributedLock.lock(5000, 2000, TimeUnit.MILLISECONDS)) {
+                List<Box> freeBoxList = boxMapper.selectByStatusAndAddress(Box.builder().address(address).status(BoxStatusEnum.FREE.getCode()).build());
+                if (CollectionUtils.isEmpty(freeBoxList)) {
+                    throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
+                }
+                Box box = freeBoxList.get(FIRST);
+                box.setStatus(BoxStatusEnum.RESERVED.getCode());
+                boxMapper.updateByPrimaryKey(box);
+
+                return box;
+            } else {
+                throw new BusinessException(ErrorResponseEnum.BOX_NOT_ENOUGH);
+            }
+        } finally {
+            redisDistributedLock.unlock();
         }
-        Box box = freeBoxList.get(FIRST);
-        box.setStatus(BoxStatusEnum.RESERVED.getCode());
-        boxMapper.updateByPrimaryKey(box);
-        return box;
     }
 
     private List<OrderItemDTO> generateOrderItemDTO(List<Cart> cartList) {
@@ -280,33 +292,42 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-    private synchronized void updateStockAndSale(List<Cart> cartList) throws BusinessException {
-        // 第一步： 查询
-        List<Integer> productIdList = cartList.stream().map(Cart::getProductId).collect(Collectors.toList());
+    private void updateStockAndSale(List<Cart> cartList) throws BusinessException {
+        RedisDistributedLock redisDistributedLock = new RedisDistributedLock("product_stock", redisTemplate);
+        try {
+            if (redisDistributedLock.lock(5000, 2000, TimeUnit.MILLISECONDS)) {
+                // 第一步： 查询
+                List<Integer> productIdList = cartList.stream().map(Cart::getProductId).collect(Collectors.toList());
 
-        // 第二步：判断
-        List<Product> products = productMapper.selectAllByProductIds(productIdList);
+                // 第二步：判断
+                List<Product> products = productMapper.selectAllByProductIds(productIdList);
 
-        List<Product> needUpdateProducts = new ArrayList<>();
-        for (Product product : products) {
-            Integer stock = product.getStock();
-            Integer quantity = cartList.stream().filter(item -> product.getId().equals(item.getProductId())).collect(Collectors.toList()).get(FIRST).getQuantity();
-            if (quantity > stock) {
-                String errorMessage = String.format("商品[%s]库存不足", product.getName());
-                throw new BusinessException(ErrorResponseEnum.STOCK_NOT_ENOUGH, errorMessage);
+                List<Product> needUpdateProducts = new ArrayList<>();
+                for (Product product : products) {
+                    Integer stock = product.getStock();
+                    Integer quantity = cartList.stream().filter(item -> product.getId().equals(item.getProductId())).collect(Collectors.toList()).get(FIRST).getQuantity();
+                    if (quantity > stock) {
+                        String errorMessage = String.format("商品[%s]库存不足", product.getName());
+                        throw new BusinessException(ErrorResponseEnum.STOCK_NOT_ENOUGH, errorMessage);
+                    } else {
+                        Product current = new Product();
+                        BeanUtils.copyProperties(product, current);
+                        current.setStock(stock - quantity);
+                        current.setSales(product.getSales() + quantity);
+                        needUpdateProducts.add(current);
+                    }
+                }
+
+                // 第三步：修改
+                needUpdateProducts.forEach(item -> {
+                    productMapper.update(item);
+                });
             } else {
-                Product current = new Product();
-                BeanUtils.copyProperties(product, current);
-                current.setStock(stock - quantity);
-                current.setSales(product.getSales() + quantity);
-                needUpdateProducts.add(current);
+                throw new BusinessException(ErrorResponseEnum.STOCK_DEDUCTION_FAILED);
             }
+        } finally {
+            redisDistributedLock.unlock();
         }
-
-        // 第三步：修改
-        needUpdateProducts.forEach(item -> {
-            productMapper.update(item);
-        });
     }
 
     private void clearCart(List<Cart> cartList) {
