@@ -212,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
     private Map<String, Object> buildSubscribeData(String... args) {
         Map<String, Object> result = new HashMap<>();
         for (int i = 0; i < args.length; i += 2) {
-            result.put(args[i], args[i + 1]);
+            result.put(args[i], this.buildValueMap(args[i + 1]));
         }
         return result;
     }
