@@ -46,10 +46,9 @@ public class OrderServiceImpl implements OrderService {
     private static final String APP_SECRET = "appSecret";
     private static final String SUBSCRIBE_MSG_TEMPLATE_ID = "subscribeMsgTemplateId";
     private static final String MINIPROGRAM_STATE = "miniprogram_state";
+    private static final int stock = 50;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER_ZH_CN = DateTimeFormatter.ofPattern("YYYY年M月d日 HH:mm");
-
-    private static int stock = 50;
     @Resource
     private OrderMapper orderMapper;
     @Resource
@@ -395,9 +394,14 @@ public class OrderServiceImpl implements OrderService {
                 if (++count >= 3) {
                     userMapper.updateStatusById(userId, UserStatusEnum.INACTIVE.getCode(), "恶意下单：十分钟内取消三次");
                     User user = userMapper.selectByPrimaryKey(userId);
-                    redisTemplate.opsForValue().set(String.valueOf(user.getId()), JSON.toJSONString(user));
+                    redisTemplate.delete(key);
+                    redisTemplate.opsForValue().set(String.valueOf(user.getId()), JSON.toJSONString(user), 1, TimeUnit.DAYS);
                 } else {
-                    redisTemplate.opsForValue().set(key, String.valueOf(count));
+                    Long expire = redisTemplate.opsForValue().getOperations().getExpire(key);
+                    if (expire == null || expire == -1 || expire == -2) {
+                        expire = 10L * 60;
+                    }
+                    redisTemplate.opsForValue().set(key, String.valueOf(count), expire, TimeUnit.SECONDS);
                 }
             }
         }
