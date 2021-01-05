@@ -49,10 +49,10 @@ public class WXServiceUtil {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     String url = String.format(POST_SEND_SUBSCRIBE_MESSAGE_URL, accessToken);
     HttpPost httpPost = new HttpPost(url);
-    HashMap<String, String> postBodyMap = new HashMap<>();
+    HashMap<String, Object> postBodyMap = new HashMap<>();
     postBodyMap.put("lang", "zh_CN");
     postBodyMap.put("touser", openId);
-    postBodyMap.put("data", JSON.toJSONString(data));
+    postBodyMap.put("data", data);
     postBodyMap.put("page", pageURL);
     postBodyMap.put("template_id", templateId);
     postBodyMap.put("miniprogram_state", miniProgramState);
