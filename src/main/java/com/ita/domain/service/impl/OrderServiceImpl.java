@@ -17,6 +17,7 @@ import com.ita.domain.redis.RedisDistributedLock;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
 import com.ita.utils.WXServiceUtil;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -201,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
             "thing4", "早餐已送达",
             "thing8", box.getAddress() + "-" + box.getNumber(),
             "character_string5", order.getOrderNumber(),
-            "date2", DATE_TIME_FORMATTER_ZH_CN.format(order.getCreateTime())
+            "date2", DATE_TIME_FORMATTER_ZH_CN.format(order.getCreateTime().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Shanghai")))
         );
         String pageURL = "/pages/order-detail/order-detail?orderNumber=";
         pageURL += order.getOrderNumber();

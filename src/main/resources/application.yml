@@ -43,9 +43,9 @@ mqtt:
   clientId: mqttx_4a02f566
 
 userminiprogramer:
-  appId: wxeb9fc8420790d4fd
-  appSecret: f32d7217755c1df12d45b7bd34a78a38
-  subscribeMsgTemplateId: RoJnn-Rw1rbaCKceUIyzSMKUIY88QlgOepwPZ8shioI
+  appId: wx7619e645cc07fe5c
+  appSecret: d5aed6b880502008d39213c2b41379d1
+  subscribeMsgTemplateId: v2sZ1loJu0tasCy9h54h5u15cUFydvFYcfyQfAZ7nnw
   miniprogramState: developer
 
 riderminiprogramer:
