@@ -10,7 +10,7 @@
         <result column="stock" jdbcType="INTEGER" property="stock"/>
         <result column="sales" jdbcType="INTEGER" property="sales"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="statusMessage" jdbcType="VARCHAR" property="statusMessage"/>
+        <result column="status_message" jdbcType="VARCHAR" property="statusMessage"/>
         <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
