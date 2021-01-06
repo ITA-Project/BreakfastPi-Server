@@ -16,9 +16,9 @@ public class TestController {
     @Autowired
     MessageService messageService;
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public Boolean test() {
-        return false;
+        return true;
     }
 
     @GetMapping("/mqtt/{boxId}")

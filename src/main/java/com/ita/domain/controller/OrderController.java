@@ -85,7 +85,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getRecentOrderByUserId(userId));
     }
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public String test() {
         log.info("api test ~~");
         return "ok";
