@@ -17,8 +17,6 @@ import com.ita.domain.redis.RedisDistributedLock;
 import com.ita.domain.service.OrderService;
 import com.ita.utils.IdWorker;
 import com.ita.utils.WXServiceUtil;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +29,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -431,7 +431,8 @@ public class OrderServiceImpl implements OrderService {
             originalOrder.setDeliverTime(LocalDateTime.now());
         }
         if (order.getStatus() == 6) {
-            originalOrder.setCancelTime(LocalDateTime.now());
+            cancelOrder(originalOrder.getOrderNumber());
+            return 1;
         }
         return orderMapper.updateByPrimaryKey(originalOrder);
     }
